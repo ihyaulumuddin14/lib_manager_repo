@@ -2,9 +2,9 @@ package services;
 
 import models.Mahasiswa;
 
-public interface MahasiswaService {
-    public void tambahMhs(Mahasiswa mhs);
-    public Mahasiswa cariMhs(String nim);
-    public void editMhs(Mahasiswa mhs);
-    public void hapusMhs(String nim);
+public abstract class MahasiswaService {
+    public abstract void tambahMhs(Mahasiswa mhs);
+    public abstract Mahasiswa cariMhs(String nim);
+    public abstract void editMhs(Mahasiswa mhs);
+    public abstract void hapusMhs(String nim);
 }

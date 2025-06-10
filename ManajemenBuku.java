@@ -1,3 +1,5 @@
-public class ManajemenBuku implements BukuService {
+import services.BukuService;
+
+public class ManajemenBuku extends BukuService {
     
 }

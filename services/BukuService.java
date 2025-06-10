@@ -2,10 +2,10 @@ package services;
 
 import models.Buku;
 
-public interface BukuService {
-    public void tambahBuku(Buku buku);
-    public Buku cariBuku(String kodeBuku);
-    public void editBuku(Buku buku);
-    public void hapusBuku(String kodeBuku);
-    public String generateKode();
+public abstract class BukuService {
+    public abstract void tambahBuku(Buku buku);
+    public abstract Buku cariBuku(String kodeBuku);
+    public abstract void editBuku(Buku buku);
+    public abstract void hapusBuku(String kodeBuku);
+    public abstract String generateKode();
 }
