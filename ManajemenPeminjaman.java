@@ -1,3 +1,5 @@
-public class ManajemenPeminjaman implements PeminjamanService {
+import services.PeminjamanService;
+
+public class ManajemenPeminjaman extends PeminjamanService {
     
 }

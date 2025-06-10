@@ -1,3 +1,5 @@
-public class ManajemenMahasiswa implements MahasiswaService {
+import services.MahasiswaService;
+
+public class ManajemenMahasiswa extends MahasiswaService {
     
 }
