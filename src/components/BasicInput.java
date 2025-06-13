@@ -47,4 +47,16 @@ public class BasicInput extends JPanel {
         gbc.insets = new Insets(0, 0, 0, 0);
         this.add(textField, gbc);
     }
+
+    public void clearForm() {
+        textField.setText(null);
+    }
+
+    public void setInputEnabled(boolean enabled) {
+        textField.setEnabled(enabled);
+    }
+
+    public String getInputText() {
+        return textField.getText();
+    }
 }

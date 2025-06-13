@@ -48,4 +48,19 @@ public class ComboBoxInput extends JPanel {
         gbc.insets = new Insets(0, 0, 0, 0);
         this.add(comboBox, gbc);
     }
+
+    public void clearForm() {
+        comboBox.setSelectedItem(null);
+    }
+
+    public void setInputEnabled(boolean enabled) {
+        comboBox.setEnabled(enabled);
+    }
+
+    public String getInputText() {
+        if (comboBox.getSelectedItem() == null) {
+            return "";
+        }
+        return comboBox.getSelectedItem().toString();
+    }
 }
