@@ -13,7 +13,10 @@ public class ManajemenMahasiswa extends MahasiswaService {
         this.fhMahasiswa = new FileHandlerMahasiswa();
     }
     public void tambahMhs(Mahasiswa mhs){
-
+        mhs.setKenaDenda();
+        mhs.setDenda();
+        daftarMahasiswa.put(mhs.getNim(),mhs);
+        fhMahasiswa.simpanData(daftarMahasiswa);
     }
     public Mahasiswa cariMhs(String nim){
         daftarMahasiswa = fhMahasiswa.bacaData();
