@@ -63,6 +63,11 @@ public class Buku {
         System.out.println(this.toString());
     }
     public String toString() {
-        return "";
+        return "Kode: " + kodeBuku +
+            ", Judul: " + namaBuku +
+            ", Penulis: " + String.join(", ", penulis) +
+            ", Stok: " + stok +
+            ", Tahun: " + tahunTerbit +
+            ", Kategori: " + kategori;
     }
 }
