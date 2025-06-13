@@ -13,15 +13,26 @@ public class ManajemenMahasiswa extends MahasiswaService {
         this.fhMahasiswa = new FileHandlerMahasiswa();
     }
     public void tambahMhs(Mahasiswa mhs){
-
+        mhs.setKenaDenda();
+        mhs.setDenda();
+        daftarMahasiswa.put(mhs.getNim(),mhs);
+        fhMahasiswa.simpanData(daftarMahasiswa);
     }
     public Mahasiswa cariMhs(String nim){
-        return null;
+        daftarMahasiswa = fhMahasiswa.bacaData();
+        return daftarMahasiswa.get(nim);
     }
-    public void editMhs(Mahasiswa mhs){
-
+    public void editMhs(String nim){
+        Mahasiswa mhs = cariMhs(nim);
+        if(mhs != null){
+            daftarMahasiswa.put(nim,mhs);
+            fhMahasiswa.simpanData(daftarMahasiswa);
+        }
     }
     public void hapusMhs(String nim){
-
+        Map<String, Mahasiswa> daftarMahasiswa = fhMahasiswa.bacaData();
+        daftarMahasiswa.remove(nim);
+        fhMahasiswa.simpanData(daftarMahasiswa);
     }
 }
+
