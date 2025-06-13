@@ -13,8 +13,8 @@ public class ManajemenMahasiswa extends MahasiswaService {
         this.fhMahasiswa = new FileHandlerMahasiswa();
     }
     public void tambahMhs(Mahasiswa mhs){
-        mhs.setKenaDenda();
-        mhs.setDenda();
+        mhs.setKenaDenda(false);
+        mhs.setDenda(0);
         daftarMahasiswa.put(mhs.getNim(),mhs);
         fhMahasiswa.simpanData(daftarMahasiswa);
     }
@@ -22,8 +22,9 @@ public class ManajemenMahasiswa extends MahasiswaService {
         daftarMahasiswa = fhMahasiswa.bacaData();
         return daftarMahasiswa.get(nim);
     }
-    public void editMhs(String nim){
-        Mahasiswa mhs = cariMhs(nim);
+    public void editMhs(Mahasiswa mhs){
+        String nim = mhs.getNim();
+        daftarMahasiswa = fhMahasiswa.bacaData();
         if(mhs != null){
             daftarMahasiswa.put(nim,mhs);
             fhMahasiswa.simpanData(daftarMahasiswa);
