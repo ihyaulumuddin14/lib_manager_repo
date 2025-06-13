@@ -9,8 +9,9 @@ public class Mahasiswa {
     private boolean kenaDenda;
     private double nominalDenda;
 
-    public Mahasiswa(String nim, String prodi) {
+    public Mahasiswa(String nim, String nama, String prodi) {
         this.nim = nim;
+        this.nama = nama;
         this.prodi = prodi;
         this.daftarBuku = new HashSet<>();
         this.kenaDenda = false;
@@ -38,17 +39,23 @@ public class Mahasiswa {
     public void setProdi(String prodi) {
         this.prodi = prodi;
     }
-    public void setKenaDenda() {
-        
+    public void setKenaDenda(boolean kenaDenda) {
+        this.kenaDenda = kenaDenda;
     }
-    public void setDenda() {
-        
+    public void setDenda(double nominalDenda) {
+        this.nominalDenda = nominalDenda;
     }
     public void tambahPinjaman(Buku buku) {
         this.daftarBuku.add(buku);
     }
     public void kembaliPinjaman(Buku buku) {
         this.daftarBuku.remove(buku);
+    }
+    public void setDaftarBuku(Set<Buku> daftarBuku) {
+        this.daftarBuku = daftarBuku;
+    }
+    public Set<Buku> getDaftarBuku() {
+        return daftarBuku;
     }
     public String toString(){
         return "";

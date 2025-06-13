@@ -73,4 +73,17 @@ public class SearchInput extends JPanel {
     public void setSearchListener(SearchListener listener) {
         this.listener = listener;
     }
+
+    public void clearForm() {
+        textField.setText(null);
+    }
+
+    public void setInputEnabled(boolean enabled) {
+        textField.setEnabled(enabled);
+        searchButton.setEnabled(enabled);
+    }
+
+    public String getInputText() {
+        return textField.getText();
+    }
 }
