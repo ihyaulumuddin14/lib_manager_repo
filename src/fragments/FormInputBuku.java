@@ -15,34 +15,40 @@ import src.components.RoundedButton;
 import src.components.RoundedPanel;
 import src.components.SearchInput;
 
-public class FormInputMhs extends RoundedPanel {
+public class FormInputBuku extends RoundedPanel {
     final String SELECTED_NAV_BTN_COLOR = "#343a40";
     final String SELECTED_NAV_BTN_TEXT_COLOR = "#e9ecef";
 
-    public FormInputMhs() {
+    public FormInputBuku() {
         super(40);
         this.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         this.setBackground(Color.WHITE);
         this.setLayout(new BorderLayout(20, 40));
 
         //title
-        JLabel formInputTitle = new JLabel("Form Input Mahasiswa");
+        JLabel formInputTitle = new JLabel("Form Input Buku");
         formInputTitle.setFont(new Font("Arial", Font.BOLD, 30));
         this.add(formInputTitle, BorderLayout.NORTH);
 
         //body
         JPanel formInputBody = new JPanel();
         formInputBody.setBackground(Color.WHITE);
-        formInputBody.setLayout(new GridLayout(3, 1, 0, 20));
+        formInputBody.setLayout(new GridLayout(3, 2, 20, 20));
 
-        SearchInput input1 = new SearchInput("NIM", "Cari");
+        SearchInput input1 = new SearchInput("Kode Buku", "Cari");
         formInputBody.add(input1);
-        BasicInput input2 = new BasicInput("Nama Mahasiswa");
+        BasicInput input2 = new BasicInput("Nama Buku");
         formInputBody.add(input2);
-
-        String[] daftarProdi = {"Teknik Informatika", "Sistem Informasi", "Teknik Komputer", "Teknologi Informasi", "Pendidikan Teknologi Informasi"};
-        ComboBoxInput input3 = new ComboBoxInput("Program Studi", daftarProdi);
+        BasicInput input3 = new BasicInput("Penulis (ex: Raditya Dika, Henry Manampiring, ...)");
         formInputBody.add(input3);
+        BasicInput input4 = new BasicInput("Penerbit");
+        formInputBody.add(input4);
+        BasicInput input5 = new BasicInput("Tahun Terbit");
+        formInputBody.add(input5);
+
+        String[] kategoriBuku = {"Fantasi", "Horor", "Fiksi", "Pendidikan", "Sejarah", "Sains"};
+        ComboBoxInput input6 = new ComboBoxInput("Kategori", kategoriBuku);
+        formInputBody.add(input6);
         this.add(formInputBody, BorderLayout.CENTER);
 
         //side button
@@ -81,6 +87,7 @@ public class FormInputMhs extends RoundedPanel {
         formInputConfirm.setBackground(Color.WHITE);
         formInputConfirm.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
 
+        //confirm button
         RoundedButton buttonCancel = new RoundedButton("Batal");
         buttonCancel.setBackground(Color.decode("#c2255c"));
         buttonCancel.setForeground(Color.decode("#ffffff"));
