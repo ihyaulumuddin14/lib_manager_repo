@@ -10,6 +10,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import filehandler.FileHandlerMahasiswa;
+import models.Mahasiswa;
+import services.ManajemenMahasiswa;
 import src.components.BasicInput;
 import src.components.ComboBoxInput;
 import src.components.RoundedButton;
@@ -30,74 +34,15 @@ public class FormInputMhs extends RoundedPanel {
     RoundedButton buttonClear = new RoundedButton("Clear");
     RoundedButton buttonCancel = new RoundedButton("Batal");
     RoundedButton buttonSave = new RoundedButton("Simpan");
-
+    FileHandlerMahasiswa fhMhs = new FileHandlerMahasiswa();
+    ManajemenMahasiswa manajemenMhs = new ManajemenMahasiswa(fhMhs);
+    Runnable onSaveSuccess;
     String mode = "";
 
-
-    private void setMode(String mode) {
-        this.mode = mode;
-        updateFormUI();
-    }
-
-    private void updateFormUI() {
-        clearForm();
-
-        switch (this.mode) {
-            case "add" -> {
-                buttonAdd.setEnabled(false);
-                buttonEdit.setEnabled(false);
-                buttonDelete.setEnabled(false);
-                buttonClear.setEnabled(true);
-                buttonCancel.setEnabled(true);
-                buttonSave.setEnabled(true);
-                inputNim.setInputEnabled(true);
-                inputNama.setInputEnabled(true);
-                inputProdi.setInputEnabled(true);
-            }
-            case "edit" -> {
-                buttonAdd.setEnabled(false);
-                buttonEdit.setEnabled(false);
-                buttonDelete.setEnabled(false);
-                buttonClear.setEnabled(true);
-                buttonCancel.setEnabled(true);
-                buttonSave.setEnabled(true);
-                inputNim.setInputEnabled(false);
-                inputNama.setInputEnabled(true);
-                inputProdi.setInputEnabled(true);
-            }
-            case "delete" -> {
-                buttonAdd.setEnabled(false);
-                buttonEdit.setEnabled(false);
-                buttonDelete.setEnabled(false);
-                buttonClear.setEnabled(true);
-                buttonCancel.setEnabled(true);
-                buttonSave.setEnabled(true);
-                inputNim.setInputEnabled(true);
-                inputNama.setInputEnabled(false);
-                inputProdi.setInputEnabled(false);
-            }
-            default -> {
-                buttonAdd.setEnabled(true);
-                buttonEdit.setEnabled(true);
-                buttonDelete.setEnabled(true);
-                buttonClear.setEnabled(true);
-                buttonCancel.setEnabled(false);
-                buttonSave.setEnabled(false);
-                inputNim.setInputEnabled(true);
-                inputNama.setInputEnabled(false);
-                inputProdi.setInputEnabled(false);
-            }
-        }
-    }
-
-    private void clearForm() {
-        this.inputNim.clearForm();
-        this.inputNama.clearForm();
-        this.inputProdi.clearForm();
-    }
-
-    public FormInputMhs() {
+    public FormInputMhs(Runnable onSaveSuccess) {
         super(40);
+        
+        this.onSaveSuccess = onSaveSuccess;
         this.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         this.setBackground(Color.WHITE);
         this.setLayout(new BorderLayout(20, 40));
@@ -174,11 +119,23 @@ public class FormInputMhs extends RoundedPanel {
                 try {
                     switch (this.mode) {
                         case "add" -> {
-                            getInputData();
+                            manajemenMhs.tambahMhs(getInputData());
+                            JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Mahasiswa berhasil ditambahkan!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                        case "edit" -> {
+                            
+                            JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Data berhasil diubah!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                        case "delete" -> {
+                            
+                            JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Data berhasil dihapus!", "Success", JOptionPane.INFORMATION_MESSAGE);
                         }
                         default -> {}
                     }
-                    JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Data berhasil disimpan!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                    if (onSaveSuccess != null) {
+                        onSaveSuccess.run();
+                    }
                 } catch (Exception err) {
                     System.out.println(err.getMessage());
                 } finally {
@@ -197,7 +154,74 @@ public class FormInputMhs extends RoundedPanel {
         updateFormUI();
     }
 
-    private void getInputData() {
+    private void setMode(String mode) {
+        this.mode = mode;
+        updateFormUI();
+    }
+
+    private void updateFormUI() {
+        clearForm();
+
+        switch (this.mode) {
+            case "add" -> {
+                buttonAdd.setEnabled(false);
+                buttonEdit.setEnabled(false);
+                buttonDelete.setEnabled(false);
+                buttonClear.setEnabled(true);
+                buttonCancel.setEnabled(true);
+                buttonSave.setEnabled(true);
+                inputNim.setInputEnabled(true);
+                inputNama.setInputEnabled(true);
+                inputProdi.setInputEnabled(true);
+            }
+            case "edit" -> {
+                buttonAdd.setEnabled(false);
+                buttonEdit.setEnabled(false);
+                buttonDelete.setEnabled(false);
+                buttonClear.setEnabled(true);
+                buttonCancel.setEnabled(true);
+                buttonSave.setEnabled(true);
+                inputNim.setInputEnabled(false);
+                inputNama.setInputEnabled(true);
+                inputProdi.setInputEnabled(true);
+            }
+            case "delete" -> {
+                buttonAdd.setEnabled(false);
+                buttonEdit.setEnabled(false);
+                buttonDelete.setEnabled(false);
+                buttonClear.setEnabled(true);
+                buttonCancel.setEnabled(true);
+                buttonSave.setEnabled(true);
+                inputNim.setInputEnabled(true);
+                inputNama.setInputEnabled(false);
+                inputProdi.setInputEnabled(false);
+            }
+            default -> {
+                buttonAdd.setEnabled(true);
+                buttonEdit.setEnabled(true);
+                buttonDelete.setEnabled(true);
+                buttonClear.setEnabled(true);
+                buttonCancel.setEnabled(false);
+                buttonSave.setEnabled(false);
+                inputNim.setInputEnabled(true);
+                inputNama.setInputEnabled(false);
+                inputProdi.setInputEnabled(false);
+            }
+        }
+    }
+
+    private void clearForm() {
+        this.inputNim.clearForm();
+        this.inputNama.clearForm();
+        this.inputProdi.clearForm();
+    }
+
+    private Mahasiswa getInputData() {
+        return new Mahasiswa(
+                inputNim.getInputText(),
+                inputNama.getInputText(),
+                inputProdi.getInputText()
+                );
     }
 
     private boolean validateInput() {

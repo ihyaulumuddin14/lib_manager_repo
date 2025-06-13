@@ -1,5 +1,6 @@
 package src.pages;
 
+import filehandler.FileHandlerMahasiswa;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -7,11 +8,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import models.Mahasiswa;
+import services.ManajemenMahasiswa;
 import src.components.RoundedPanel;
 import src.fragments.DataScrollPane;
 import src.fragments.FormInputMhs;
@@ -19,6 +22,11 @@ import src.fragments.FormInputMhs;
 public class MahasiswaFormPage extends JPanel {
     final String DEFAULT_BG_COLOR = "#868e96";
     final String SELECTED_NAV_BTN_COLOR = "#343a40";
+    String[] columns = {"NIM", "Nama", "Program Studi", "Status"};
+    RoundedPanel tablePanel;
+    DataScrollPane scrollPane;
+    FileHandlerMahasiswa fhMhs = new FileHandlerMahasiswa();
+    ManajemenMahasiswa manajemenMhs = new ManajemenMahasiswa(fhMhs);
 
     public MahasiswaFormPage() {
         this.setLayout(new GridBagLayout());
@@ -40,7 +48,9 @@ public class MahasiswaFormPage extends JPanel {
         this.add(formInputWrapper, gbc);
 
         //form input panel yang warna putih rounded
-        JPanel formInputPanel = new FormInputMhs();
+        JPanel formInputPanel = new FormInputMhs(() -> {
+            refreshTable();
+        });
         formInputWrapper.add(formInputPanel, BorderLayout.CENTER);
 
 
@@ -109,36 +119,35 @@ public class MahasiswaFormPage extends JPanel {
         tableWrapper.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 20));
 
         //tabel panel
-        JPanel tablePanel = new RoundedPanel(40);
+        tablePanel = new RoundedPanel(40);
         tablePanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         tablePanel.setLayout(new BorderLayout());
         tablePanel.setBackground(Color.WHITE);
-
-        // Data dummy 15 orang
-        String[][] data = {
-            {"24510001", "Ahmad Rizky Pratama", "Teknik Informatika"},
-            {"24510002", "Siti Nurhaliza Putri", "Sistem Informasi"},
-            {"24510003", "Budi Santoso", "Teknik Elektro"},
-            {"24510004", "Dewi Kartika Sari", "Manajemen"},
-            {"24510005", "Eko Prasetyo", "Akuntansi"},
-            {"24510006", "Fitri Handayani", "Teknik Sipil"},
-            {"24510007", "Gunawan Setiawan", "Teknik Mesin"},
-            {"24510008", "Hana Maulida", "Psikologi"},
-            {"24510009", "Indra Kurniawan", "Ekonomi"},
-            {"24510010", "Joko Widodo", "Teknik Industri"},
-            {"24510011", "Kartika Dewi", "Farmasi"},
-            {"24510012", "Lukman Hakim", "Kedokteran"},
-            {"24510013", "Maya Sari", "Hukum"},
-            {"24510014", "Naufal Ahmad", "Arsitektur"},
-            {"24510015", "Octavia Putri", "Desain Grafis"}
-        };
         
-        // Column headers
-        String[] columns = {"NIM", "Nama", "Program Studi", "Status"};
-        JScrollPane scrollPane = new DataScrollPane(columns, data);
-        
-        tablePanel.add(scrollPane, BorderLayout.CENTER);
+        refreshTable();
         tableWrapper.add(tablePanel, BorderLayout.CENTER);
         this.add(tableWrapper, gbc);
+    }
+
+    public void refreshTable() {
+        Map<String, Mahasiswa> daftarMahasiswa = fhMhs.bacaData();
+        String[][] data = new String[daftarMahasiswa.size()][4];
+        int i = 0;
+
+        for (Map.Entry<String, Mahasiswa> mhs : daftarMahasiswa.entrySet()) {
+            String nim = mhs.getKey();
+            String nama = mhs.getValue().getNama();
+            String prodi = mhs.getValue().getProdi();
+            String status = mhs.getValue().getKenaDenda() ? "Kena Denda" : "Baik";
+            
+            String[] dataMhsPerRow = {nim, nama, prodi, status};
+            data[i++] = dataMhsPerRow;
+        }
+
+        if (scrollPane != null) tablePanel.remove(scrollPane);
+        scrollPane = new DataScrollPane(columns, data);
+        tablePanel.add(scrollPane, BorderLayout.CENTER);
+        tablePanel.revalidate();
+        tablePanel.repaint();
     }
 }

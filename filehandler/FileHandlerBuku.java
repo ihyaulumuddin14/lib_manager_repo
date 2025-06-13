@@ -1,6 +1,7 @@
 package filehandler;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
@@ -9,14 +10,21 @@ import java.util.Map;
 import models.Buku;
 
 public class FileHandlerBuku {
-    private String NAMA_FILE = "tbl_buku.txt";
+    private String NAMA_FILE = "database/tbl_buku.txt";
     private String DELIMITER = "|";
     private String DAFTAR_PENULIS_DELIMITER = ",";
 
-    public FileHandlerBuku(){
-    }
-
     public void simpanData(Map<String, Buku> daftarBuku) {
+        File tbl_buku = new File(NAMA_FILE);
+
+        try {
+            if (!tbl_buku.exists()) {
+                tbl_buku.createNewFile();
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(NAMA_FILE))) {
             for (String key : daftarBuku.keySet()) {
                 Buku buku = daftarBuku.get(key);
@@ -25,7 +33,7 @@ public class FileHandlerBuku {
                 writer.write(String.join(DAFTAR_PENULIS_DELIMITER, buku.getPenulis()) + DELIMITER);
                 writer.write(buku.getStok() + DELIMITER);
                 writer.write(buku.getTahunTerbit() + DELIMITER);
-                writer.write(buku.getKategori() + DELIMITER);
+                writer.write(buku.getKategori());
                 writer.newLine();
             }
         } catch (Exception e) {
@@ -59,8 +67,8 @@ public class FileHandlerBuku {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            return daftarBuku;
         }
+
+        return daftarBuku;
     }
 }
