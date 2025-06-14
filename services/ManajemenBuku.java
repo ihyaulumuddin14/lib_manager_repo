@@ -1,37 +1,55 @@
 package services;
-import models.Buku;
+import filehandler.FileHandlerBuku;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
-import filehandler.FileHandlerBuku;
+import models.Buku;
 
 public class ManajemenBuku extends BukuService {
     private Map<String, Buku> daftarBuku = new HashMap<>();
-    private FileHandlerBuku fhBuku = new FileHandlerBuku();
+    private FileHandlerBuku fhBuku;
 
-    public void tambahBuku(Buku buku) {
-        daftarBuku.put(buku.getKodeBuku(), buku);
-        fhBuku.simpanData(daftarBuku);
+    public ManajemenBuku(FileHandlerBuku fhBuku) {
+        this.fhBuku = fhBuku;
+        this.daftarBuku = fhBuku.bacaData();
     }
 
+    @Override
+    public boolean tambahBuku(Buku buku) {
+        daftarBuku = fhBuku.bacaData();
+        if (daftarBuku.containsKey(buku.getKodeBuku())) return false;
+        daftarBuku.put(buku.getKodeBuku(), buku);
+        fhBuku.simpanData(daftarBuku);
+        return true;
+    }
+
+    @Override
     public Buku cariBuku(String kodeBuku) {
+        daftarBuku = fhBuku.bacaData();
         return daftarBuku.get(kodeBuku);
     }
 
+    @Override
     public void editBuku(Buku buku) {
+        daftarBuku = fhBuku.bacaData();
         if (daftarBuku.containsKey(buku.getKodeBuku())) {
             daftarBuku.put(buku.getKodeBuku(), buku);
             fhBuku.simpanData(daftarBuku);
         }
     }
 
-    public void hapusBuku(String kodeBuku) {
+    @Override
+    public boolean hapusBuku(String kodeBuku) {
+        daftarBuku = fhBuku.bacaData();
+        if (!daftarBuku.containsKey(kodeBuku)) return false;
         daftarBuku.remove(kodeBuku);
         fhBuku.simpanData(daftarBuku);
+        return true;
     }
 
+    @Override
     public String generateKode() {
+        daftarBuku = fhBuku.bacaData();
         Random rand = new Random();
         String kode;
         do {
@@ -39,13 +57,5 @@ public class ManajemenBuku extends BukuService {
             kode = String.format("BK%04d", angkaAcak); 
         } while (daftarBuku.containsKey(kode));
         return kode;
-    }
-
-    public Map<String, Buku> getDaftarBuku() {
-        return new HashMap<>(daftarBuku); 
-    }
-
-    public void simpanKeFile() {
-        fhBuku.simpanData(daftarBuku);
     }
 }

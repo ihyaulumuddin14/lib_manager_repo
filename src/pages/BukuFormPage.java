@@ -1,11 +1,15 @@
 package src.pages;
 
+import filehandler.FileHandlerBuku;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import models.Buku;
+import services.ManajemenBuku;
 import src.components.RoundedPanel;
 import src.fragments.DataScrollPane;
 import src.fragments.FormInputBuku;
@@ -13,6 +17,12 @@ import src.fragments.FormInputBuku;
 public class BukuFormPage extends JPanel {
     final String DEFAULT_BG_COLOR = "#868e96";
     final String SELECTED_NAV_BTN_COLOR = "#343a40";
+    String[] columns = {"Kode Buku", "Nama Buku", "Penulis", "Stok", "Tahun Terbit", "Kategori"};
+    RoundedPanel tablePanel;
+    DataScrollPane scrollPane;
+    FormInputBuku formInputPanel;
+    FileHandlerBuku fhBuku = new FileHandlerBuku();
+    ManajemenBuku manajemenBuku = new ManajemenBuku(fhBuku);
 
     public BukuFormPage() {
         this.setLayout(new GridBagLayout());
@@ -34,7 +44,9 @@ public class BukuFormPage extends JPanel {
         this.add(formInputWrapper, gbc);
 
         //form input panel yang warna putih rounded
-        JPanel formInputPanel = new FormInputBuku();
+        formInputPanel = new FormInputBuku(() -> {
+            refreshTable();
+        });
         formInputWrapper.add(formInputPanel, BorderLayout.CENTER);        
          
         //tabel wrapper
@@ -51,24 +63,42 @@ public class BukuFormPage extends JPanel {
         tableWrapper.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 20));
 
         //tabel panel
-        JPanel tablePanel = new RoundedPanel(40);
+        tablePanel = new RoundedPanel(40);
         tablePanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         tablePanel.setLayout(new BorderLayout());
         tablePanel.setBackground(Color.WHITE);
 
-        // Data dummy 15 orang
-        String[][] data = {
-            {"B001", "Pemrograman Web", "Dwi Sutrisno", "15", "2022", "Pendidikan"},
-            {"B002", "Pemrograman Mobile", "Dwi Sutrisno", "15", "2022", "Pendidikan"},
-            {"B003", "Pemrograman Desktop", "Dwi Sutrisno", "15", "2022", "Pendidikan"},
-        };
-        
-        // Column headers
-        String[] columns = {"Kode Buku", "Nama Buku", "Penulis", "Stok", "Tahun Terbit", "Kategori"};
-        DataScrollPane scrollPane = new DataScrollPane(columns, data, (String key) -> {});
-        
-        tablePanel.add(scrollPane, BorderLayout.CENTER);
+        refreshTable();
         tableWrapper.add(tablePanel, BorderLayout.CENTER);
         this.add(tableWrapper, gbc);
+    }
+
+    public void refreshTable() {
+        Map<String, Buku> daftarBuku = fhBuku.bacaData();
+        String[][] data = new String[daftarBuku.size()][4];
+        int i = 0;
+
+        for (Map.Entry<String, Buku> buku : daftarBuku.entrySet()) {
+            String kodeBuku = buku.getKey();
+            String namaBuku = buku.getValue().getNamaBuku();
+            String penulis = String.join(", ", buku.getValue().getPenulis());
+            String stok = String.valueOf(buku.getValue().getStok());
+            String tahunTerbit = String.valueOf(buku.getValue().getTahunTerbit());
+            String kategori = buku.getValue().getKategori();
+
+            String[] dataBukuPerRow = {kodeBuku, namaBuku, penulis, stok, tahunTerbit, kategori};
+            data[i++] = dataBukuPerRow;
+        }
+
+        if (scrollPane != null) tablePanel.remove(scrollPane);
+            scrollPane = new DataScrollPane(columns, data, (kodeBuku) -> {
+            String kode = kodeBuku;
+
+            Buku buku = manajemenBuku.cariBuku(kode);
+            formInputPanel.setFieldInput(buku.getKodeBuku(), buku.getNamaBuku(), String.join(",", buku.getPenulis()), String.valueOf(buku.getStok()), String.valueOf(buku.getTahunTerbit()), buku.getKategori());
+        });
+        tablePanel.add(scrollPane, BorderLayout.CENTER);
+        tablePanel.revalidate();
+        tablePanel.repaint();
     }
 }

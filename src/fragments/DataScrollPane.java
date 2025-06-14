@@ -23,9 +23,9 @@ public class DataScrollPane extends JScrollPane {
         this.table.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
-                String nim = table.getValueAt(selectedRow, 0).toString();
+                String key = table.getValueAt(selectedRow, 0).toString();
 
-                onSelectedRow.onSelected(nim);
+                onSelectedRow.onSelected(key);
             }
             this.table.clearSelection();
         });
@@ -39,6 +39,7 @@ public class DataScrollPane extends JScrollPane {
         table.setBorder(BorderFactory.createEmptyBorder());
         table.setShowHorizontalLines(true);
         table.setShowVerticalLines(false);
+        table.setDragEnabled(false);
         
         // Header styling
         JTableHeader header = table.getTableHeader();

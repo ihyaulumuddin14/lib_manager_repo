@@ -53,7 +53,8 @@ public class FileHandlerMahasiswa {
 
     public Map<String, Mahasiswa> bacaData() {
         Map<String, Mahasiswa> daftarMahasiswa = new HashMap<>();
-        ManajemenBuku manajemenBuku = new ManajemenBuku();
+        FileHandlerBuku fhBuku = new FileHandlerBuku();
+        ManajemenBuku manajemenBuku = new ManajemenBuku(fhBuku);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(NAMA_FILE))) {
 

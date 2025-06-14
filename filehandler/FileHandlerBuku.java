@@ -47,7 +47,7 @@ public class FileHandlerBuku {
         try (BufferedReader reader = new BufferedReader(new FileReader(NAMA_FILE))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] data = line.split(DELIMITER);
+                String[] data = line.split("\\|");
                 String kodeBuku = data[0];
                 String namaBuku = data[1];
                 String daftarPenulis = data[2];

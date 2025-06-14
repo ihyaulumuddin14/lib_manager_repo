@@ -55,7 +55,8 @@ public class FormInputMhs extends RoundedPanel {
         JPanel formInputBody = new JPanel();
         formInputBody.setBackground(Color.WHITE);
         formInputBody.setLayout(new GridLayout(3, 1, 0, 20));
-        formInputBody.add(inputNim);
+
+        //listener cari nim
         inputNim.setSearchListener((String nim) -> {
             Mahasiswa mhs = manajemenMhs.cariMhs(nim);
             if (mhs != null) {
@@ -63,8 +64,12 @@ public class FormInputMhs extends RoundedPanel {
                 inputNama.setInputText(mhs.getNama());
                 inputProdi.setInputText(mhs.getProdi());
                 MahasiswaFormPage.refreshStatistik(mhs);
+            } else {
+                JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + nim + " tidak ditemukan.");
             }
         });
+
+        formInputBody.add(inputNim);
         formInputBody.add(inputNama);
         formInputBody.add(inputProdi);
         this.add(formInputBody, BorderLayout.CENTER);
@@ -78,6 +83,7 @@ public class FormInputMhs extends RoundedPanel {
         buttonAdd.addActionListener(e -> {
             setMode("add");
         });
+
         buttonAdd.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
         buttonAdd.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
         buttonAdd.setMaximumSize(new Dimension(200, 50));
@@ -86,6 +92,7 @@ public class FormInputMhs extends RoundedPanel {
         buttonEdit.addActionListener(e -> {
             setMode("edit");
         });
+
         buttonEdit.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
         buttonEdit.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
         buttonEdit.setMaximumSize(new Dimension(200, 50));
@@ -94,6 +101,7 @@ public class FormInputMhs extends RoundedPanel {
         buttonDelete.addActionListener(e -> {
             setMode("delete");
         });
+
         buttonDelete.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
         buttonDelete.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
         buttonDelete.setMaximumSize(new Dimension(200, 50));
@@ -103,6 +111,7 @@ public class FormInputMhs extends RoundedPanel {
         buttonClear.addActionListener(e -> {
             clearForm();
         });
+
         buttonClear.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
         buttonClear.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
         buttonClear.setMaximumSize(new Dimension(200, 50));
@@ -117,6 +126,7 @@ public class FormInputMhs extends RoundedPanel {
         buttonCancel.addActionListener(e -> {
             setMode("");
         });
+
         buttonCancel.setBackground(Color.decode("#c2255c"));
         buttonCancel.setForeground(Color.decode("#ffffff"));
         buttonCancel.setEnabled(false);
@@ -140,9 +150,13 @@ public class FormInputMhs extends RoundedPanel {
                             JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Data berhasil diubah!", "Success", JOptionPane.INFORMATION_MESSAGE);
                         }
                         case "delete" -> {
-                            Mahasiswa mhs = getInputData();
-                            manajemenMhs.hapusMhs(mhs.getNim());
-                            JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Data berhasil dihapus!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            boolean success = manajemenMhs.hapusMhs(getInputData().getNim());
+
+                            if (success) {
+                                JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Data berhasil dihapus!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            } else {
+                                JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Data gagal dihapus!", "Failed", JOptionPane.ERROR_MESSAGE);
+                            }
                         }
                         default -> {}
                     }
@@ -151,15 +165,16 @@ public class FormInputMhs extends RoundedPanel {
                         onSaveSuccess.run();
                     }
                 } catch (Exception err) {
-                    System.out.println(err.getMessage());
+                    JOptionPane.showMessageDialog(new MahasiswaFormPage(), err.getMessage(), "Failed", JOptionPane.ERROR_MESSAGE);
                 } finally {
                     setMode("");
                     clearForm();
                 }
             } else {
-                JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Semua field harus diisi!", "Failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Semua field harus diisi!");
             }
         });
+
         buttonSave.setBackground(Color.decode("#2f9e44"));
         buttonSave.setForeground(Color.decode("#ffffff"));
         buttonSave.setEnabled(false);

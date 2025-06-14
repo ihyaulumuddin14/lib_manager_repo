@@ -14,9 +14,8 @@ public class ManajemenMahasiswa extends MahasiswaService {
     }
     @Override
     public boolean tambahMhs(Mahasiswa mhs) {
-        if (daftarMahasiswa.containsKey(mhs.getNim())) {
-            return false;
-        }
+        daftarMahasiswa = fhMahasiswa.bacaData();
+        if (daftarMahasiswa.containsKey(mhs.getNim())) return false;
         mhs.setKenaDenda(false);
         mhs.setDenda(0);
         daftarMahasiswa.put(mhs.getNim(),mhs);
@@ -30,18 +29,20 @@ public class ManajemenMahasiswa extends MahasiswaService {
     }
     @Override
     public void editMhs(Mahasiswa mhs){
-        String nim = mhs.getNim();
         daftarMahasiswa = fhMahasiswa.bacaData();
+        String nim = mhs.getNim();
         if(mhs != null){
             daftarMahasiswa.put(nim,mhs);
             fhMahasiswa.simpanData(daftarMahasiswa);
         }
     }
     @Override
-    public void hapusMhs(String nim){
-        Map<String, Mahasiswa> daftarMahasiswa = fhMahasiswa.bacaData();
+    public boolean hapusMhs(String nim){
+        daftarMahasiswa = fhMahasiswa.bacaData();
+        if (!daftarMahasiswa.containsKey(nim)) return false;
         daftarMahasiswa.remove(nim);
         fhMahasiswa.simpanData(daftarMahasiswa);
+        return true;
     }
 }
 

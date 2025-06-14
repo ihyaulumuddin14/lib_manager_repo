@@ -59,7 +59,7 @@ public class MahasiswaFormPage extends JPanel {
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
-        gbc.weightx = 0.0;
+        gbc.weightx = 0.3;
         gbc.fill = GridBagConstraints.BOTH;
         statWrapper = new JPanel();
         statWrapper.setLayout(new BorderLayout());

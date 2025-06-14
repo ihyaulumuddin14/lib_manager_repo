@@ -1,1 +1,1 @@
-245150201111023|Tuti|Sistem Informasi||true|0.0
+245150201111023|Tut|Sistem Informasi||false|0.0
