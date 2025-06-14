@@ -8,14 +8,27 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import src.custom_listener.OnSelectedRow;
 
 public class DataScrollPane extends JScrollPane {
     private DefaultTableModel model;
     private JTable table;
+    public OnSelectedRow onSelectedRow;
+    
 
-    public DataScrollPane(String[] columns, Object[][] data) {
+    public DataScrollPane(String[] columns, Object[][] data, OnSelectedRow onSelectedRow) {
+        this.onSelectedRow = onSelectedRow;
         this.model = new DefaultTableModel(data, columns);
         this.table = new JTable(model);
+        this.table.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1) {
+                String nim = table.getValueAt(selectedRow, 0).toString();
+
+                onSelectedRow.onSelected(nim);
+            }
+            this.table.clearSelection();
+        });
         this.setViewportView(table);
 
         // Table styling

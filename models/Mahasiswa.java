@@ -2,12 +2,14 @@ package models;
 import java.util.*;
 
 public class Mahasiswa {
-    private String nim;
+    private String nim = "";
     private String nama;
     private String prodi;
     private Set<Buku> daftarBuku;
     private boolean kenaDenda;
     private double nominalDenda;
+
+    public Mahasiswa() {}
 
     public Mahasiswa(String nim, String nama, String prodi) {
         this.nim = nim;

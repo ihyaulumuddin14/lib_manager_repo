@@ -1,5 +1,6 @@
 package src.fragments;
 
+import filehandler.FileHandlerMahasiswa;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -10,8 +11,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-import filehandler.FileHandlerMahasiswa;
 import models.Mahasiswa;
 import services.ManajemenMahasiswa;
 import src.components.BasicInput;
@@ -57,6 +56,15 @@ public class FormInputMhs extends RoundedPanel {
         formInputBody.setBackground(Color.WHITE);
         formInputBody.setLayout(new GridLayout(3, 1, 0, 20));
         formInputBody.add(inputNim);
+        inputNim.setSearchListener((String nim) -> {
+            Mahasiswa mhs = manajemenMhs.cariMhs(nim);
+            if (mhs != null) {
+                inputNim.setInputText(mhs.getNim());
+                inputNama.setInputText(mhs.getNama());
+                inputProdi.setInputText(mhs.getProdi());
+                MahasiswaFormPage.refreshStatistik(mhs);
+            }
+        });
         formInputBody.add(inputNama);
         formInputBody.add(inputProdi);
         this.add(formInputBody, BorderLayout.CENTER);
@@ -119,15 +127,21 @@ public class FormInputMhs extends RoundedPanel {
                 try {
                     switch (this.mode) {
                         case "add" -> {
-                            manajemenMhs.tambahMhs(getInputData());
-                            JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Mahasiswa berhasil ditambahkan!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            boolean success = manajemenMhs.tambahMhs(getInputData());
+
+                            if (success)
+                                JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Mahasiswa berhasil ditambahkan!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            else
+                                JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Mahasiswa gagal ditambahkan!", "Failed", JOptionPane.ERROR_MESSAGE);
                         }
                         case "edit" -> {
-                            
+                            Mahasiswa mhs = getInputData();
+                            manajemenMhs.editMhs(mhs);
                             JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Data berhasil diubah!", "Success", JOptionPane.INFORMATION_MESSAGE);
                         }
                         case "delete" -> {
-                            
+                            Mahasiswa mhs = getInputData();
+                            manajemenMhs.hapusMhs(mhs.getNim());
                             JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Data berhasil dihapus!", "Success", JOptionPane.INFORMATION_MESSAGE);
                         }
                         default -> {}
@@ -140,6 +154,7 @@ public class FormInputMhs extends RoundedPanel {
                     System.out.println(err.getMessage());
                 } finally {
                     setMode("");
+                    clearForm();
                 }
             } else {
                 JOptionPane.showMessageDialog(new MahasiswaFormPage(), "Semua field harus diisi!", "Failed", JOptionPane.ERROR_MESSAGE);
@@ -160,10 +175,10 @@ public class FormInputMhs extends RoundedPanel {
     }
 
     private void updateFormUI() {
-        clearForm();
-
+        
         switch (this.mode) {
             case "add" -> {
+                clearForm();
                 buttonAdd.setEnabled(false);
                 buttonEdit.setEnabled(false);
                 buttonDelete.setEnabled(false);
@@ -226,5 +241,11 @@ public class FormInputMhs extends RoundedPanel {
 
     private boolean validateInput() {
         return !(inputNim.getInputText().isEmpty() || inputNama.getInputText().isEmpty() || inputProdi.getInputText().isEmpty());
+    }
+
+    public void setFieldInput(String nim, String nama, String prodi) {
+        inputNim.setInputText(nim);
+        inputNama.setInputText(nama);
+        inputProdi.setInputText(prodi);
     }
 }

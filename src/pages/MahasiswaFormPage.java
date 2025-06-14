@@ -3,21 +3,17 @@ package src.pages;
 import filehandler.FileHandlerMahasiswa;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import models.Mahasiswa;
 import services.ManajemenMahasiswa;
 import src.components.RoundedPanel;
 import src.fragments.DataScrollPane;
 import src.fragments.FormInputMhs;
+import src.fragments.StatistikPeminjaman;
 
 public class MahasiswaFormPage extends JPanel {
     final String DEFAULT_BG_COLOR = "#868e96";
@@ -25,6 +21,9 @@ public class MahasiswaFormPage extends JPanel {
     String[] columns = {"NIM", "Nama", "Program Studi", "Status"};
     RoundedPanel tablePanel;
     DataScrollPane scrollPane;
+    FormInputMhs formInputPanel;
+    static RoundedPanel statPanel;
+    static JPanel statWrapper;
     FileHandlerMahasiswa fhMhs = new FileHandlerMahasiswa();
     ManajemenMahasiswa manajemenMhs = new ManajemenMahasiswa(fhMhs);
 
@@ -48,7 +47,7 @@ public class MahasiswaFormPage extends JPanel {
         this.add(formInputWrapper, gbc);
 
         //form input panel yang warna putih rounded
-        JPanel formInputPanel = new FormInputMhs(() -> {
+        formInputPanel = new FormInputMhs(() -> {
             refreshTable();
         });
         formInputWrapper.add(formInputPanel, BorderLayout.CENTER);
@@ -62,45 +61,13 @@ public class MahasiswaFormPage extends JPanel {
         gbc.gridheight = 1;
         gbc.weightx = 0.0;
         gbc.fill = GridBagConstraints.BOTH;
-        JPanel statWrapper = new JPanel();
+        statWrapper = new JPanel();
         statWrapper.setLayout(new BorderLayout());
         statWrapper.setBackground(Color.decode(DEFAULT_BG_COLOR));
         statWrapper.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
-        JPanel statPanel = new RoundedPanel(40);
-        statPanel.setLayout(new BorderLayout(0, 20));
-        statPanel.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
-        statPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        //header
-        JLabel statLabel = new JLabel("Buku Sedang Dipinjam: ");
-        statLabel.setForeground(Color.WHITE);
-        statLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        statPanel.add(statLabel, BorderLayout.NORTH);
-
-        //body
-        String[] daftarBuku = {"Buku 1", "Buku 2", "Buku 3", "Buku 4", "Buku 5"};
-        List<String> daftarBukuDummy = Arrays.asList(daftarBuku);
-
-        JTextArea statValue = new JTextArea();
-        for (String buku : daftarBukuDummy) {
-            statValue.append("- " + buku + "\n");
-        }
-
-        statValue.setEditable(false);
-        statValue.setOpaque(false);
-        statValue.setForeground(Color.WHITE);
-        statValue.setFont(new Font("Arial", Font.PLAIN, 16));
-        statPanel.add(statValue, BorderLayout.CENTER);
-
-        //footer
-        boolean isDenda = false;
-        String stat = isDenda ? "Kena Denda" : "Baik";
-        JLabel statStatus = new JLabel("Status: " + stat);
-        statStatus.setFont(new Font("Arial", Font.BOLD, 20));
-        statStatus.setForeground(Color.WHITE);
-        statPanel.add(statStatus, BorderLayout.SOUTH);
-
+        Mahasiswa mhs = new Mahasiswa();
+        statPanel = new StatistikPeminjaman(mhs);
         statWrapper.add(statPanel, BorderLayout.CENTER);
         this.add(statWrapper, gbc);
         
@@ -145,9 +112,25 @@ public class MahasiswaFormPage extends JPanel {
         }
 
         if (scrollPane != null) tablePanel.remove(scrollPane);
-        scrollPane = new DataScrollPane(columns, data);
+            scrollPane = new DataScrollPane(columns, data, (nimData) -> {
+            String nim = nimData;
+
+            Mahasiswa mhs = manajemenMhs.cariMhs(nim);
+
+            formInputPanel.setFieldInput(mhs.getNim(), mhs.getNama(), mhs.getProdi());
+
+            refreshStatistik(mhs);
+        });
         tablePanel.add(scrollPane, BorderLayout.CENTER);
         tablePanel.revalidate();
         tablePanel.repaint();
+    }
+
+    public static void refreshStatistik(Mahasiswa mhs) {
+        statWrapper.remove(statPanel);
+        statPanel = new StatistikPeminjaman(mhs);
+        statWrapper.add(statPanel, BorderLayout.CENTER);
+        statWrapper.revalidate();
+        statWrapper.repaint();
     }
 }

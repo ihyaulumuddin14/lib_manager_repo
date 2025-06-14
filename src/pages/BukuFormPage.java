@@ -6,7 +6,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import src.components.RoundedPanel;
 import src.fragments.DataScrollPane;
 import src.fragments.FormInputBuku;
@@ -66,7 +65,7 @@ public class BukuFormPage extends JPanel {
         
         // Column headers
         String[] columns = {"Kode Buku", "Nama Buku", "Penulis", "Stok", "Tahun Terbit", "Kategori"};
-        JScrollPane scrollPane = new DataScrollPane(columns, data);
+        DataScrollPane scrollPane = new DataScrollPane(columns, data, (String key) -> {});
         
         tablePanel.add(scrollPane, BorderLayout.CENTER);
         tableWrapper.add(tablePanel, BorderLayout.CENTER);

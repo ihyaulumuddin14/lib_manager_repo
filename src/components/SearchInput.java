@@ -86,4 +86,8 @@ public class SearchInput extends JPanel {
     public String getInputText() {
         return textField.getText();
     }
+
+    public void setInputText(String text) {
+        textField.setText(text);
+    }
 }
