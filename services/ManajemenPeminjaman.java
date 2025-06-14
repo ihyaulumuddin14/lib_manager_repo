@@ -1,41 +1,41 @@
 package services;
 
-import filehandler.FIleHandlerPeminjaman;
+import filehandler.FileHandlerPeminjaman;
 import filehandler.FileHandlerRiwayat;
-import models.Peminjaman;
-import models.Buku;
-import models.Mahasiswa;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import models.Buku;
+import models.Mahasiswa;
+import models.Peminjaman;
 
 public class ManajemenPeminjaman extends PeminjamanService {
     private Map<Integer, Peminjaman> daftarPeminjaman;
     private List<Peminjaman> riwayat;
-    private FIleHandlerPeminjaman fhPeminjaman;
-    private FileHandlerRiwayat fhRiwayat; 
+    public FileHandlerPeminjaman fhPeminjaman;
+    public FileHandlerRiwayat fhRiwayat; 
 
     public ManajemenPeminjaman(ManajemenBuku manajemenBuku, ManajemenMahasiswa manajemenMahasiswa) {
-        this.fhPeminjaman = new FIleHandlerPeminjaman(manajemenBuku, manajemenMahasiswa);
+        this.fhPeminjaman = new FileHandlerPeminjaman(manajemenBuku, manajemenMahasiswa);
         this.fhRiwayat = new FileHandlerRiwayat(manajemenBuku, manajemenMahasiswa);
         this.daftarPeminjaman = fhPeminjaman.bacaData();
         this.riwayat = fhRiwayat.bacaRiwayat();
     }
 
-    public void tambahDataPeminjaman(Peminjaman p) {
+    public void tambahPeminjaman(Peminjaman p) {
+        this.daftarPeminjaman = fhPeminjaman.bacaData();
         daftarPeminjaman.put(p.getKodePeminjaman(), p);
         fhPeminjaman.simpanData(daftarPeminjaman);
     }
 
-    public void hapusDataPeminjaman(int kodePeminjaman) {
+    public void hapusPeminjaman(int kodePeminjaman) {
         if (daftarPeminjaman.containsKey(kodePeminjaman)) {
             Peminjaman removedPeminjaman = daftarPeminjaman.remove(kodePeminjaman);
             fhPeminjaman.simpanData(daftarPeminjaman);
-            System.out.println("Peminjaman dengan kode " + kodePeminjaman + " berhasil dihapus dari data aktif.");
         } else {
             System.out.println("Peminjaman dengan kode " + kodePeminjaman + " tidak ditemukan dalam daftar aktif.");
         }
@@ -62,7 +62,7 @@ public class ManajemenPeminjaman extends PeminjamanService {
 
         Peminjaman peminjamanBaru = new Peminjaman(kodePeminjaman, mhs, bukuYangDipinjam, tanggalPinjam, batasTanggalKembali, "Dipinjam");
         
-        tambahDataPeminjaman(peminjamanBaru); 
+        tambahPeminjaman(peminjamanBaru); 
 
         for (Buku buku : bukuYangDipinjam) {
             buku.kurangiStok();
@@ -88,7 +88,7 @@ public class ManajemenPeminjaman extends PeminjamanService {
             }
 
             fhRiwayat.tambahRiwayat(peminjaman);
-            hapusDataPeminjaman(kodePeminjaman);
+            hapusPeminjaman(kodePeminjaman);
 
             System.out.println("Pengembalian untuk kode peminjaman " + kodePeminjaman + " berhasil diproses dan dipindahkan ke riwayat.");
 
@@ -100,10 +100,20 @@ public class ManajemenPeminjaman extends PeminjamanService {
     }
     public int generateKode() {
         Random rand = new Random();
-        int kode;
+        int kode = 0;
+        boolean exists;
         do {
             kode = rand.nextInt(9000) + 1000;
-        } while (daftarPeminjaman.containsKey(kode) || riwayat.stream().anyMatch(p -> p.getKodePeminjaman() == kode)); 
+            exists = daftarPeminjaman.containsKey(kode);
+            if (!exists) {
+                for (Peminjaman p : riwayat) {
+                    if (p.getKodePeminjaman() == kode) {
+                        exists = true;
+                        break;
+                    }
+                }
+            }
+        } while (exists);
         return kode;
     }
     public Map<Integer, Peminjaman> getDaftarPeminjaman() {
@@ -118,5 +128,13 @@ public class ManajemenPeminjaman extends PeminjamanService {
     public void hapusSeluruhRiwayat() {
         fhRiwayat.hapusRiwayat();
         this.riwayat.clear();
+    }
+
+    public void setTanggalKembali() {
+
+    }
+
+    public boolean periksaKeterlambatan() {
+        return false;
     }
 }

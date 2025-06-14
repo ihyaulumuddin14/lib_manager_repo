@@ -1,11 +1,5 @@
 package filehandler;
 
-import models.Buku;
-import models.Mahasiswa;
-import models.Peminjaman;
-import services.ManajemenBuku;
-import services.ManajemenMahasiswa;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,15 +11,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import models.Buku;
+import models.Mahasiswa;
+import models.Peminjaman;
+import services.ManajemenBuku;
+import services.ManajemenMahasiswa;
 
-public class FIleHandlerPeminjaman { 
+public class FileHandlerPeminjaman { 
     private String NAMA_FILE = "database/tbl_peminjaman.txt";
     private String DELIMITER = "|";
     private String DAFTAR_BUKU_DELIMITER = ",";
     private ManajemenBuku manajemenBuku;
     private ManajemenMahasiswa manajemenMahasiswa;
 
-    public FIleHandlerPeminjaman(ManajemenBuku manajemenBuku, ManajemenMahasiswa manajemenMahasiswa) {
+    public FileHandlerPeminjaman(ManajemenBuku manajemenBuku, ManajemenMahasiswa manajemenMahasiswa) {
         this.manajemenBuku = manajemenBuku;
         this.manajemenMahasiswa = manajemenMahasiswa;
     }

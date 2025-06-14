@@ -12,11 +12,9 @@ import javax.swing.JTextArea;
 import models.Buku;
 import models.Mahasiswa;
 import src.components.RoundedPanel;
-import src.custom_listener.SetStatistik;
 
 public class StatistikPeminjaman extends RoundedPanel {
     final String SELECTED_NAV_BTN_COLOR = "#343a40";
-    SetStatistik setStatistik;
     JTextArea statValue;
     JLabel statStatus;
 
