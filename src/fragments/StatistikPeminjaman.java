@@ -45,7 +45,7 @@ public class StatistikPeminjaman extends RoundedPanel {
             }
             
             boolean isDenda = mhs.getKenaDenda();
-            String stat = isDenda ? "Kena Denda" : "Baik";
+            String stat = isDenda ? "Kena Denda Rp." + mhs.getDenda() : "Baik";
             statStatus = new JLabel("Status: " + stat);
         } else {
             statValue = new JTextArea("");

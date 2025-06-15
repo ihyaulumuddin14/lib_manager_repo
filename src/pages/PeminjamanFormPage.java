@@ -59,6 +59,8 @@ public class PeminjamanFormPage extends JPanel {
         this.add(formInputWrapper, gbc);
 
         formInputPanel = new FormInputPeminjaman(() -> {
+            daftarBuku.clear();
+            loadKeranjang();
             refreshTable();
         });
         formInputPanel.setOnCart(new AddBookOnCart() {
@@ -165,6 +167,8 @@ public class PeminjamanFormPage extends JPanel {
             String buku = String.join(", ", daftarBukuList);
             String tanggalPinjam = pem.getValue().getTanggalPinjam().toString();
             String jatuhTempo = pem.getValue().getBatasTanggalKembali().toString();
+
+            manajemenPeminjaman.periksaKeterlambatan(Integer.valueOf(kodePeminjaman));
             String status = pem.getValue().getStatus();
             
             String[] dataPeminjamanPerRow = {kodePeminjaman, nama, buku, tanggalPinjam, jatuhTempo, status};

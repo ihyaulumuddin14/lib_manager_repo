@@ -186,16 +186,20 @@ public class FormInputPeminjaman extends RoundedPanel {
                 }
                 LocalDate tanggalPinjam = LocalDate.now();
                 LocalDate batasTanggalKembali = tanggalPinjam.plusDays(7);
-                String status = "Belum Dikembalikan";
+                String status = "Dipinjam";
                 Peminjaman peminjaman = new Peminjaman(kodePeminjaman, mhs, daftarBukuSet, tanggalPinjam, batasTanggalKembali, status);
 
-                manajemenPeminjaman.tambahPeminjaman(peminjaman);
+                boolean success = manajemenPeminjaman.tambahPeminjaman(peminjaman);
 
+                if (success) {
+                    JOptionPane.showMessageDialog(null, "Peminjaman berhasil disimpan");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Peminjaman gagal disimpan");
+                }
+                
                 onSaveSuccess.run();
                 clearForm();
                 setMode("");
-
-                JOptionPane.showMessageDialog(null, "Peminjaman berhasil disimpan");
             } else {
                 JOptionPane.showMessageDialog(null, "Tidak ada buku terdeteksi");
             }

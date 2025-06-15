@@ -1,2 +1,2 @@
-BK1935|GUI|fulan|1|2090|Fantasi
-BK2681|Seni bicara|Fulin|2|2234|Fiksi
+BK1935|GUI|fulan|0|2090|Fantasi
+BK2681|Seni bicara|Fulin|1|2234|Fiksi

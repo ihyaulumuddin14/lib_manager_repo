@@ -16,6 +16,8 @@ public class Mahasiswa {
         this.nama = nama;
         this.prodi = prodi;
         this.daftarBuku = new HashSet<>();
+        this.kenaDenda = false;
+        this.nominalDenda = 0;
     }
 
     public String getNim() {

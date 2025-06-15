@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.StringJoiner;
+import javax.swing.JOptionPane;
 import models.Buku;
 import models.Mahasiswa;
 import models.Peminjaman;
@@ -16,20 +18,57 @@ import models.Peminjaman;
 public class ManajemenPeminjaman extends PeminjamanService {
     private Map<Integer, Peminjaman> daftarPeminjaman;
     private List<Peminjaman> riwayat;
+    private ManajemenMahasiswa manajemenMahasiswa;
+    private ManajemenBuku manajemenBuku;
     public FileHandlerPeminjaman fhPeminjaman;
-    public FileHandlerRiwayat fhRiwayat; 
+    public FileHandlerRiwayat fhRiwayat;
 
     public ManajemenPeminjaman(ManajemenBuku manajemenBuku, ManajemenMahasiswa manajemenMahasiswa) {
+        this.manajemenBuku = manajemenBuku;
+        this.manajemenMahasiswa = manajemenMahasiswa;
         this.fhPeminjaman = new FileHandlerPeminjaman(manajemenBuku, manajemenMahasiswa);
         this.fhRiwayat = new FileHandlerRiwayat(manajemenBuku, manajemenMahasiswa);
         this.daftarPeminjaman = fhPeminjaman.bacaData();
         this.riwayat = fhRiwayat.bacaRiwayat();
     }
 
-    public void tambahPeminjaman(Peminjaman p) {
+    public boolean tambahPeminjaman(Peminjaman p) {
         this.daftarPeminjaman = fhPeminjaman.bacaData();
+        
+        //cek apakah sudah pernah pinjam buku yang sama
+        StringJoiner bukuSama = new StringJoiner(", ");
+        for (Buku buku : p.getDaftarBukuDipinjam()) {
+            String kodeBuku = buku.getKodeBuku();
+            for (Buku b : p.getMhs().getDaftarBuku()) {
+                if (b.getKodeBuku().equals(kodeBuku)) {
+                    bukuSama.add(b.getNamaBuku());
+                }
+            }
+        }
+
+        System.out.println(bukuSama.toString());
+        if (bukuSama.length() > 0) {
+            JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + p.getMhs().getNim() + " telah meminjam buku " + bukuSama + " sebelumnya.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        //cek apakah stok buku cukup
+        for (Buku buku : p.getDaftarBukuDipinjam()) {
+            if ((buku.getStok() - 1) < 0) {
+                JOptionPane.showMessageDialog(null, "Stok buku " + buku.getNamaBuku() + " tidak cukup.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                
+                return false;
+            }
+            buku.kurangiStok();
+            manajemenBuku.editBuku(buku);
+        }
+        
+        //tambah semua buku jika aman
+        p.getMhs().getDaftarBuku().addAll(p.getDaftarBukuDipinjam());
         daftarPeminjaman.put(p.getKodePeminjaman(), p);
+        manajemenMahasiswa.editMhs(p.getMhs());
         fhPeminjaman.simpanData(daftarPeminjaman);
+        return true;
     }
 
     public void hapusPeminjaman(int kodePeminjaman) {
@@ -134,7 +173,21 @@ public class ManajemenPeminjaman extends PeminjamanService {
 
     }
 
-    public boolean periksaKeterlambatan() {
-        return false;
+    @Override
+    public void periksaKeterlambatan(Integer kodePeminjaman) {
+        this.daftarPeminjaman = fhPeminjaman.bacaData();
+
+        if (LocalDate.now().isAfter(this.daftarPeminjaman.get(kodePeminjaman).getBatasTanggalKembali())) {
+            this.daftarPeminjaman.get(kodePeminjaman).setStatus("Terlambat");
+
+            Peminjaman pem = this.daftarPeminjaman.get(kodePeminjaman);
+            pem.getMhs().setKenaDenda(true);
+            pem.getMhs().setDenda(10000 * pem.getDaftarBukuDipinjam().size());
+            manajemenMahasiswa.editMhs(pem.getMhs());
+        } else {
+            daftarPeminjaman.get(kodePeminjaman).setStatus("Dipinjam");
+        }
+        
+        fhPeminjaman.simpanData(this.daftarPeminjaman);
     }
 }
