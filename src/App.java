@@ -18,6 +18,7 @@ import src.components.*;
 import src.pages.BukuFormPage;
 import src.pages.MahasiswaFormPage;
 import src.pages.PeminjamanFormPage;
+import src.pages.PengembalianFormPage;
 import src.pages.RiwayatPage;
 
 public class App extends JFrame {
@@ -55,6 +56,9 @@ public class App extends JFrame {
             case "mahasiswa" -> mainPanel = new MahasiswaFormPage();
             case "buku" -> mainPanel = new BukuFormPage();
             case "peminjaman" -> mainPanel = new PeminjamanFormPage();
+            //xx
+            case "pengembalian" -> mainPanel = new PengembalianFormPage();
+            //xx
             case "riwayat peminjaman" -> mainPanel = new RiwayatPage();
             default -> {}
         }
@@ -96,11 +100,12 @@ public class App extends JFrame {
         sideBarHeader.add(titleApps);
 
         // sideBarBody
-        String[] menus = {"Mahasiswa", "Buku", "Peminjaman", "", "", "", "", "Riwayat Peminjaman"};
+        String[] menus = {"Mahasiswa", "Buku", "Peminjaman", "Pengembalian", "", "", "", "Riwayat Peminjaman"};
         List<JButton> buttons = new ArrayList<>();
 
         for (int i = 0; i < menus.length; i++) {
-            if (i <= 2 || i >= 7) {
+            // menu dari i <= 2 jadi i <= 3
+            if (i <= 3 || i >= 7) {
                 JButton navBtn = new RoundedButton(menus[i]);
                 navBtn.setPreferredSize(new Dimension(250, 40));
                 navBtn.setFont(new Font("Arial", Font.PLAIN, 20));
