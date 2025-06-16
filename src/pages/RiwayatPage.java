@@ -45,7 +45,9 @@ public class RiwayatPage extends JPanel {
         
         // Column headers
         String[] columns = {"Kode Peminjaman", "Nama Mahasiswa", "Buku Dipinjam", "Tanggal Pinjam", "Jatuh Tempo", "Keterangan"};
-        JScrollPane scrollPane = new DataScrollPane(columns, data, (String key) -> {});
+
+        JScrollPane scrollPane;
+        scrollPane = new DataScrollPane(columns, data, (kodePeminjaman) -> {});
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();

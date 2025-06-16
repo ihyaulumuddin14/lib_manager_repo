@@ -71,7 +71,6 @@ public class MahasiswaFormPage extends JPanel {
         statWrapper.add(statPanel, BorderLayout.CENTER);
         this.add(statWrapper, gbc);
         
-        
         //tabel wrapper
         gbc.gridx = 0;
         gbc.gridy = 1;

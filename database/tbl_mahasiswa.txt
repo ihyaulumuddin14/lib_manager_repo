@@ -1,0 +1,2 @@
+110|obj1|Teknik Informatika|BK2681,BK1935|false|0.0
+245150207111044|Muhammad Gathan Raka|Teknik Informatika|BK1935,BK2681|false|0.0

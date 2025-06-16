@@ -149,7 +149,7 @@ public class PeminjamanFormPage extends JPanel {
 
         statPanel.add(statValue, BorderLayout.CENTER);
         statPanel.revalidate();
-        statPanel.repaint();
+        statPanel.repaint(); 
     }
 
     private void refreshTable() {
