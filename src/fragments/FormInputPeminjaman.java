@@ -8,7 +8,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -18,7 +17,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import models.Buku;
 import models.Mahasiswa;
-import models.Peminjaman;
 import services.ManajemenBuku;
 import services.ManajemenMahasiswa;
 import services.ManajemenPeminjaman;
@@ -178,18 +176,16 @@ public class FormInputPeminjaman extends RoundedPanel {
         
         buttonSave.addActionListener(e -> {
             if (!PeminjamanFormPage.daftarBuku.isEmpty()) {
-                int kodePeminjaman = manajemenPeminjaman.generateKode();
+                
+                int durasiPeminjaman = 7;
                 Mahasiswa mhs = manajemenMhs.cariMhs(inputNim.getInputText());
                 Set<Buku> daftarBukuSet = new HashSet<>();
+
                 for (Map.Entry<String, String> buku : PeminjamanFormPage.daftarBuku.entrySet()) {
                     daftarBukuSet.add(manajemenBuku.cariBuku(buku.getKey()));
                 }
-                LocalDate tanggalPinjam = LocalDate.now();
-                LocalDate batasTanggalKembali = tanggalPinjam.plusDays(7);
-                String status = "Dipinjam";
-                Peminjaman peminjaman = new Peminjaman(kodePeminjaman, mhs, daftarBukuSet, tanggalPinjam, batasTanggalKembali, status);
 
-                boolean success = manajemenPeminjaman.tambahPeminjaman(peminjaman);
+                boolean success = manajemenPeminjaman.prosesPeminjaman(mhs, daftarBukuSet, durasiPeminjaman);
 
                 if (success) {
                     JOptionPane.showMessageDialog(null, "Peminjaman berhasil disimpan");

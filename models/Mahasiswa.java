@@ -59,7 +59,4 @@ public class Mahasiswa {
     public Set<Buku> getDaftarBuku() {
         return daftarBuku;
     }
-    public String toString(){
-        return "";
-    }
 }

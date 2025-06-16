@@ -34,20 +34,40 @@ public class ManajemenPeminjaman extends PeminjamanService {
         this.riwayat = fhRiwayat.bacaRiwayat();
     }
 
-    public boolean tambahPeminjaman(Peminjaman p) {
+    public void tambahPeminjaman(Peminjaman peminjamanBaru) {
         this.daftarPeminjaman = fhPeminjaman.bacaData();
+        daftarPeminjaman.put(peminjamanBaru.getKodePeminjaman(), peminjamanBaru);
+        manajemenMahasiswa.editMhs(peminjamanBaru.getMhs());
+        fhPeminjaman.simpanData(daftarPeminjaman);
+    }
 
+    public void hapusPeminjaman(int kodePeminjaman) {
+        if (daftarPeminjaman.containsKey(kodePeminjaman)) {
+            daftarPeminjaman.remove(kodePeminjaman);
+            fhPeminjaman.simpanData(daftarPeminjaman);
+        } else {
+            System.out.println("Peminjaman dengan kode " + kodePeminjaman + " tidak ditemukan dalam daftar aktif.");
+        }
+    }
+
+    public boolean prosesPeminjaman(Mahasiswa mhs, Set<Buku> bukuYangDipinjam, int durasiPinjamHari) {
+        int kodePeminjaman = generateKode();
+        LocalDate tanggalPinjam = LocalDate.now();
+        LocalDate batasTanggalKembali = tanggalPinjam.plusDays(durasiPinjamHari);
+
+        Peminjaman peminjamanBaru = new Peminjaman(kodePeminjaman, mhs, bukuYangDipinjam, tanggalPinjam, batasTanggalKembali, "Dipinjam");
+        
         //cek apakah pernah telat
-        if (p.getMhs().getKenaDenda()) {
-            JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + p.getMhs().getNim() + " telah terlambat.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        if (peminjamanBaru.getMhs().getKenaDenda()) {
+            JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + peminjamanBaru.getMhs().getNim() + " telah terlambat. Mohon segera membayar denda.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             // return false;
         }
         
         //cek apakah sudah pernah pinjam buku yang sama
         StringJoiner bukuSama = new StringJoiner(", ");
-        for (Buku buku : p.getDaftarBukuDipinjam()) {
+        for (Buku buku : peminjamanBaru.getDaftarBukuDipinjam()) {
             String kodeBuku = buku.getKodeBuku();
-            for (Buku b : p.getMhs().getDaftarBuku()) {
+            for (Buku b : peminjamanBaru.getMhs().getDaftarBuku()) {
                 if (b.getKodeBuku().equals(kodeBuku)) {
                     bukuSama.add(b.getNamaBuku());
                 }
@@ -55,68 +75,28 @@ public class ManajemenPeminjaman extends PeminjamanService {
         }
 
         if (bukuSama.length() > 0) {
-            JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + p.getMhs().getNim() + " telah meminjam buku " + bukuSama + " sebelumnya.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + peminjamanBaru.getMhs().getNim() + " telah meminjam buku " + bukuSama + " sebelumnya.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return false;
         }
 
-        //cek apakah stok buku cukup
-        for (Buku buku : p.getDaftarBukuDipinjam()) {
+        //cek apakah stok buku cukup ketika dikurangi 1
+        for (Buku buku : peminjamanBaru.getDaftarBukuDipinjam()) {
             if ((buku.getStok() - 1) < 0) {
                 JOptionPane.showMessageDialog(null, "Stok buku " + buku.getNamaBuku() + " tidak cukup.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-                
                 return false;
             }
-            buku.kurangiStok();
-            manajemenBuku.editBuku(buku);
         }
-        
-        //tambah semua buku jika aman
-        p.getMhs().getDaftarBuku().addAll(p.getDaftarBukuDipinjam());
-        daftarPeminjaman.put(p.getKodePeminjaman(), p);
-        manajemenMahasiswa.editMhs(p.getMhs());
-        fhPeminjaman.simpanData(daftarPeminjaman);
-        return true;
-    }
 
-    public void hapusPeminjaman(int kodePeminjaman) {
-        if (daftarPeminjaman.containsKey(kodePeminjaman)) {
-            Peminjaman removedPeminjaman = daftarPeminjaman.remove(kodePeminjaman);
-            fhPeminjaman.simpanData(daftarPeminjaman);
-        } else {
-            System.out.println("Peminjaman dengan kode " + kodePeminjaman + " tidak ditemukan dalam daftar aktif.");
-        }
-    }
-
-    public Peminjaman cariPeminjaman(int kodePeminjaman) {
-        this.daftarPeminjaman = fhPeminjaman.bacaData();
-        return daftarPeminjaman.get(kodePeminjaman);
-    }
-
-    public void updatePeminjaman(Peminjaman peminjaman) {
-        if (daftarPeminjaman.containsKey(peminjaman.getKodePeminjaman())) {
-            daftarPeminjaman.put(peminjaman.getKodePeminjaman(), peminjaman);
-            fhPeminjaman.simpanData(daftarPeminjaman);
-        } else {
-            System.out.println("Peminjaman dengan kode " + peminjaman.getKodePeminjaman() + " tidak ditemukan untuk diperbarui.");
-        }
-    }
-
-    public String prosesPeminjaman(Mahasiswa mhs, Set<Buku> bukuYangDipinjam, int durasiPinjamHari) {
-        int kodePeminjaman = generateKode();
-        LocalDate tanggalPinjam = LocalDate.now();
-        LocalDate batasTanggalKembali = tanggalPinjam.plusDays(durasiPinjamHari);
-
-        Peminjaman peminjamanBaru = new Peminjaman(kodePeminjaman, mhs, bukuYangDipinjam, tanggalPinjam, batasTanggalKembali, "Dipinjam");
-        
-        tambahPeminjaman(peminjamanBaru); 
-
+        //kurangi buku
         for (Buku buku : bukuYangDipinjam) {
             buku.kurangiStok();
+            manajemenBuku.editBuku(buku);
             mhs.tambahPinjaman(buku);
         }
 
-        System.out.println("Peminjaman berhasil dilakukan dengan kode: " + kodePeminjaman);
-        return peminjamanBaru.toString();
+        this.tambahPeminjaman(peminjamanBaru); 
+
+        return true;
     }
 
     public void prosesPengembalian(int kodePeminjaman) {
@@ -177,10 +157,6 @@ public class ManajemenPeminjaman extends PeminjamanService {
     public void hapusSeluruhRiwayat() {
         fhRiwayat.hapusRiwayat();
         this.riwayat.clear();
-    }
-
-    public void setTanggalKembali() {
-
     }
 
     @Override
