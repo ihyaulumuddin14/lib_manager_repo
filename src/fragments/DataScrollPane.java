@@ -18,7 +18,12 @@ public class DataScrollPane extends JScrollPane {
 
     public DataScrollPane(String[] columns, Object[][] data, OnSelectedRow onSelectedRow) {
         this.onSelectedRow = onSelectedRow;
-        this.model = new DefaultTableModel(data, columns);
+        this.model = new DefaultTableModel(data, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         this.table = new JTable(model);
         this.table.getSelectionModel().addListSelectionListener(e -> {
             int selectedRow = table.getSelectedRow();
@@ -40,6 +45,8 @@ public class DataScrollPane extends JScrollPane {
         table.setShowHorizontalLines(true);
         table.setShowVerticalLines(false);
         table.setDragEnabled(false);
+        table.getTableHeader().setReorderingAllowed(false);
+
         
         // Header styling
         JTableHeader header = table.getTableHeader();

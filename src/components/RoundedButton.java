@@ -9,8 +9,8 @@ public class RoundedButton extends JButton {
     public RoundedButton(String text) {
         super(text);
         setContentAreaFilled(false);
-        setFocusPainted(false);
-        setBorderPainted(false);
+        setFocusPainted(true);
+        setBorderPainted(true);
     }
 
     @Override

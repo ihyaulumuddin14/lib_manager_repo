@@ -40,7 +40,7 @@ public class ManajemenPeminjaman extends PeminjamanService {
         //cek apakah pernah telat
         if (p.getMhs().getKenaDenda()) {
             JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + p.getMhs().getNim() + " telah terlambat.", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return false;
+            // return false;
         }
         
         //cek apakah sudah pernah pinjam buku yang sama
