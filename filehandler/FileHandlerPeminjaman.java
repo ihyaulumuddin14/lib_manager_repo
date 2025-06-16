@@ -76,7 +76,7 @@ public class FileHandlerPeminjaman {
                 LocalDate tanggalPinjam = LocalDate.parse(data[3]); 
                 LocalDate batasTanggalKembali = LocalDate.parse(data[4]); 
                 LocalDate tanggalKembali = data[5].equals("null") ? null : LocalDate.parse(data[5]); 
-                String status = data[6];
+                String status = data[6];    
 
                 Mahasiswa mhs = manajemenMahasiswa.cariMhs(nimMahasiswa);
                 if (mhs == null) {
