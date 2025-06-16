@@ -36,10 +36,30 @@ public class ManajemenPeminjaman extends PeminjamanService {
 
     public void tambahPeminjaman(Peminjaman peminjamanBaru) {
         this.daftarPeminjaman = fhPeminjaman.bacaData();
+        daftarPeminjaman.put(peminjamanBaru.getKodePeminjaman(), peminjamanBaru);
+        manajemenMahasiswa.editMhs(peminjamanBaru.getMhs());
+        fhPeminjaman.simpanData(daftarPeminjaman);
+    }
 
+    public void hapusPeminjaman(int kodePeminjaman) {
+        if (daftarPeminjaman.containsKey(kodePeminjaman)) {
+            daftarPeminjaman.remove(kodePeminjaman);
+            fhPeminjaman.simpanData(daftarPeminjaman);
+        } else {
+            System.out.println("Peminjaman dengan kode " + kodePeminjaman + " tidak ditemukan dalam daftar aktif.");
+        }
+    }
+
+    public boolean prosesPeminjaman(Mahasiswa mhs, Set<Buku> bukuYangDipinjam, int durasiPinjamHari) {
+        int kodePeminjaman = generateKode();
+        LocalDate tanggalPinjam = LocalDate.now();
+        LocalDate batasTanggalKembali = tanggalPinjam.plusDays(durasiPinjamHari);
+
+        Peminjaman peminjamanBaru = new Peminjaman(kodePeminjaman, mhs, bukuYangDipinjam, tanggalPinjam, batasTanggalKembali, "Dipinjam");
+        
         //cek apakah pernah telat
-        if (p.getMhs().getKenaDenda()) {
-            JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + p.getMhs().getNim() + " telah terlambat.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        if (peminjamanBaru.getMhs().getKenaDenda()) {
+            JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + peminjamanBaru.getMhs().getNim() + " telah terlambat. Mohon segera membayar denda.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             // return false;
         }
         
@@ -54,7 +74,6 @@ public class ManajemenPeminjaman extends PeminjamanService {
             }
         }
 
-        System.out.println(bukuSama.toString());
         if (bukuSama.length() > 0) {
             JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + peminjamanBaru.getMhs().getNim() + " telah meminjam buku " + bukuSama + " sebelumnya.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return false;
@@ -143,7 +162,7 @@ public class ManajemenPeminjaman extends PeminjamanService {
     @Override
     public void periksaKeterlambatan(Integer kodePeminjaman) {
         this.daftarPeminjaman = fhPeminjaman.bacaData();
-        
+
         if (LocalDate.now().isAfter(this.daftarPeminjaman.get(kodePeminjaman).getBatasTanggalKembali())) {
             this.daftarPeminjaman.get(kodePeminjaman).setStatus("Terlambat");
 
