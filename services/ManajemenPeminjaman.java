@@ -181,7 +181,7 @@ public class ManajemenPeminjaman extends PeminjamanService {
     @Override
     public void periksaKeterlambatan(Integer kodePeminjaman) {
         this.daftarPeminjaman = fhPeminjaman.bacaData();
-
+        
         if (LocalDate.now().isAfter(this.daftarPeminjaman.get(kodePeminjaman).getBatasTanggalKembali())) {
             this.daftarPeminjaman.get(kodePeminjaman).setStatus("Terlambat");
 
