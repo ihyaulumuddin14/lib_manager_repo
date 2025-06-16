@@ -34,6 +34,12 @@ public class ManajemenPeminjaman extends PeminjamanService {
 
     public boolean tambahPeminjaman(Peminjaman p) {
         this.daftarPeminjaman = fhPeminjaman.bacaData();
+
+        //cek apakah pernah telat
+        if (p.getMhs().getKenaDenda()) {
+            JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + p.getMhs().getNim() + " telah terlambat.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
         
         //cek apakah sudah pernah pinjam buku yang sama
         StringJoiner bukuSama = new StringJoiner(", ");
@@ -46,7 +52,6 @@ public class ManajemenPeminjaman extends PeminjamanService {
             }
         }
 
-        System.out.println(bukuSama.toString());
         if (bukuSama.length() > 0) {
             JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + p.getMhs().getNim() + " telah meminjam buku " + bukuSama + " sebelumnya.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return false;
