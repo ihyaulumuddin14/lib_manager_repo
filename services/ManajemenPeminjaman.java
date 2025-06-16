@@ -1,5 +1,6 @@
 package services;
 
+import filehandler.FileHandlerBuku;
 import filehandler.FileHandlerPeminjaman;
 import filehandler.FileHandlerRiwayat;
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ public class ManajemenPeminjaman extends PeminjamanService {
     private ManajemenBuku manajemenBuku;
     public FileHandlerPeminjaman fhPeminjaman;
     public FileHandlerRiwayat fhRiwayat;
+    public FileHandlerBuku fhBuku;
 
     public ManajemenPeminjaman(ManajemenBuku manajemenBuku, ManajemenMahasiswa manajemenMahasiswa) {
         this.manajemenBuku = manajemenBuku;
@@ -128,6 +130,9 @@ public class ManajemenPeminjaman extends PeminjamanService {
             Mahasiswa mhs = peminjaman.getMhs();
             for (Buku buku : peminjaman.getDaftarBukuDipinjam()) {
                 buku.tambahStok();
+                //x
+                manajemenBuku.editBuku(buku);
+                //x
                 mhs.kembaliPinjaman(buku);
             }
 
