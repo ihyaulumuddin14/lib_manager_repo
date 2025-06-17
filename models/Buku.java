@@ -59,15 +59,4 @@ public class Buku {
     public void setKategori(String kategori) {
         this.kategori = kategori;
     }
-    public void getInfo() {
-        System.out.println(this.toString());
-    }
-    public String toString() {
-        return "Kode: " + kodeBuku +
-            ", Judul: " + namaBuku +
-            ", Penulis: " + String.join(", ", penulis) +
-            ", Stok: " + stok +
-            ", Tahun: " + tahunTerbit +
-            ", Kategori: " + kategori;
-    }
 }

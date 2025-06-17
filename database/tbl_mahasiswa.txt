@@ -1,1 +1,0 @@
-1234|Budi|Teknik Informatika||true|10000.0

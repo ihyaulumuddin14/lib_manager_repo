@@ -44,6 +44,6 @@ public class ManajemenMahasiswa extends MahasiswaService {
         daftarMahasiswa.remove(nim);
         fhMahasiswa.simpanData(daftarMahasiswa);
         return true;
-    }
+    } 
 }
 

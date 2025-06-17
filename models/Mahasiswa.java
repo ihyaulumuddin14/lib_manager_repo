@@ -1,7 +1,5 @@
 package models;
-import filehandler.FileHandlerBuku;
 import java.util.*;
-import services.ManajemenBuku;
 
 public class Mahasiswa {
     private String nim = "";
@@ -10,7 +8,7 @@ public class Mahasiswa {
     private Set<Buku> daftarBuku;
     private boolean kenaDenda;
     private double nominalDenda;
-    private ManajemenBuku manajemenBuku = new ManajemenBuku(new FileHandlerBuku());
+    // private ManajemenBuku manajemenBuku = new ManajemenBuku(new FileHandlerBuku());
 
     public Mahasiswa() {}
 

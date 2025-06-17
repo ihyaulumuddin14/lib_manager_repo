@@ -69,3 +69,4 @@ public class Peminjaman {
         isDikembalikan = dikembalikan;
     }
 }
+ 
