@@ -1,28 +1,26 @@
 package src.pages;
 
+import filehandler.FileHandlerBuku;
+import filehandler.FileHandlerMahasiswa;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
-import filehandler.FileHandlerBuku;
-import filehandler.FileHandlerMahasiswa;
 import models.Buku;
 import models.Peminjaman;
-import src.components.RoundedButton;
-import src.components.RoundedPanel;
-import src.fragments.DataScrollPane;
 import services.ManajemenBuku;
 import services.ManajemenMahasiswa;
 import services.ManajemenPeminjaman;
+import src.components.RoundedButton;
+import src.components.RoundedPanel;
+import src.fragments.DataScrollPane;
 import src.fragments.FormInputPeminjaman;
 
 public class RiwayatPage extends JPanel {
@@ -35,7 +33,7 @@ public class RiwayatPage extends JPanel {
     final String DEFAULT_BG_COLOR = "#868e96";
     final String SELECTED_NAV_BTN_COLOR = "#343a40";
 
-        String[] columns = {"Kode Peminjaman", "Nama Mahasiswa", "Buku Dipinjam", "Tanggal Pinjam", "Jatuh Tempo", "Keterangan"};
+    String[] columns = {"Kode Peminjaman", "Nama Mahasiswa", "Buku Dipinjam", "Tanggal Pinjam", "Tanggal Dikembalikan", "Keterangan"};
 
     public RiwayatPage() {
         this.setLayout(new BorderLayout());
@@ -55,63 +53,53 @@ public class RiwayatPage extends JPanel {
         tablePanel.add(title, BorderLayout.NORTH);
 
         refreshTable();
-        // Column headers
-
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         buttonPanel.setBackground(Color.WHITE);
         tablePanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        RoundedButton deleteButton = new RoundedButton("Hapus");
-        deleteButton.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
-        deleteButton.setForeground(Color.WHITE);
-        buttonPanel.add(deleteButton);
-
         RoundedButton deleteAllButton = new RoundedButton("Hapus Semua");
         deleteAllButton.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
         deleteAllButton.setForeground(Color.WHITE);
         buttonPanel.add(deleteAllButton);
-
         this.add(tablePanel, BorderLayout.CENTER);
+        
+        deleteAllButton.addActionListener(e -> {
+            manajemenPeminjaman.hapusSeluruhRiwayat();
+            refreshTable();
+            JOptionPane.showMessageDialog(this, "Semua riwayat berhasil dihapus.");
+        });
     }
     
     public void refreshTable() {
         List<Peminjaman> daftarPeminjaman = manajemenPeminjaman.fhRiwayat.bacaRiwayat();   
         String[][] data = new String[daftarPeminjaman.size()][6];  
-        int i = 0;   
+        int i = 0;
+        
         for (Peminjaman pem : daftarPeminjaman) {    
-        if (pem == null) {      
-        System.out.println("Peminjaman tidak ditemukan");
-        
-        continue;
-        
-        }
-        
-        String kodePeminjaman = Integer.toString(pem.getKodePeminjaman());
-        
-        String nama = pem.getMhs().getNama();
-        
-        List<String> daftarBukuList = new ArrayList<>();
-        
-        for (Buku buku : pem.getDaftarBukuDipinjam()) {
-        
-        daftarBukuList.add(buku.getNamaBuku());
-        
-        }
-        
-        String buku = String.join(", ", daftarBukuList);
-        
-        String tanggalPinjam = pem.getTanggalPinjam().toString();
-        
-        String jatuhTempo = pem.getBatasTanggalKembali().toString();
-      
-        String status = pem.getStatus();
-        
-        String[] dataPeminjamanPerRow = {kodePeminjaman, nama, buku, tanggalPinjam, jatuhTempo, status};
-        
-        data[i++] = dataPeminjamanPerRow;
-        
+            if (pem == null) {      
+                System.out.println("Peminjaman tidak ditemukan");        
+                continue;        
+            }
+            
+            String kodePeminjaman = Integer.toString(pem.getKodePeminjaman());
+            String nama = pem.getMhs().getNama();
+            
+            List<String> daftarBukuList = new ArrayList<>();
+            
+            for (Buku buku : pem.getDaftarBukuDipinjam()) {
+                daftarBukuList.add(buku.getNamaBuku());        
+            }
+            
+            String buku = String.join(", ", daftarBukuList);
+            String tanggalPinjam = pem.getTanggalPinjam().toString();
+            String tanggalKembali = pem.getTanggalKembali().toString();
+            String status = pem.getStatus();
+            
+            String[] dataPeminjamanPerRow = {kodePeminjaman, nama, buku, tanggalPinjam, tanggalKembali, status};
+            
+            data[i++] = dataPeminjamanPerRow;
         } 
 
 

@@ -5,7 +5,6 @@ import filehandler.FileHandlerBuku;
 import filehandler.FileHandlerMahasiswa;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import models.Buku;
@@ -23,13 +21,9 @@ import services.ManajemenBuku;
 import services.ManajemenMahasiswa;
 import services.ManajemenPeminjaman;
 import src.components.RoundedPanel;
-import src.custom_listener.AddBookOnCart;
 import src.fragments.DataScrollPane;
-//
 import src.fragments.FormInputPengembalian;
 import src.fragments.StatistikPeminjaman;
-import filehandler.FileHandlerMahasiswa;
-import src.fragments.FormInputMhs;
 //
 
 public class PengembalianFormPage extends JPanel {

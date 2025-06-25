@@ -31,17 +31,23 @@ import src.pages.PeminjamanFormPage;
 public class FormInputPeminjaman extends RoundedPanel {
     final String SELECTED_NAV_BTN_COLOR = "#343a40";
     final String SELECTED_NAV_BTN_TEXT_COLOR = "#e9ecef";
+
+    //elemen input
     SearchInput inputNim = new SearchInput("NIM", "Cari");
     SearchInput inputKodeBuku = new SearchInput("Kode Buku", "Cari");
     BasicInput inputNamaMhs = new BasicInput("Nama Mahasiswa");
     BasicInput inputJudulBuku = new BasicInput("Judul Buku");
     ComboBoxInput inputProdi = new ComboBoxInput("Program Studi", new String[]{"Teknik Informatika", "Sistem Informasi", "Teknik Komputer", "Teknologi Informasi", "Pendidikan Teknologi Informasi"});
     ComboBoxInput inputKategori = new ComboBoxInput("Kategori", new String[]{"Fantasi", "Horor", "Fiksi", "Pendidikan", "Sejarah", "Sains"});
-    RoundedButton buttonAdd = new RoundedButton("Buat Pinjaman");
-    RoundedButton buttonAddBook = new RoundedButton("Tambah Buku");
+
+    //button
+    RoundedButton buttonAdd = new RoundedButton("Buat");
+    RoundedButton buttonAddBook = new RoundedButton("Tambah");
     RoundedButton buttonClear = new RoundedButton("Clear");
     RoundedButton buttonCancel = new RoundedButton("Batal");
     RoundedButton buttonSave = new RoundedButton("Simpan");
+
+    //manajemen
     FileHandlerMahasiswa fhMhs = new FileHandlerMahasiswa();
     ManajemenMahasiswa manajemenMhs = new ManajemenMahasiswa(fhMhs);
     FileHandlerBuku fhBuku = new FileHandlerBuku();
@@ -59,13 +65,12 @@ public class FormInputPeminjaman extends RoundedPanel {
         this.setBackground(Color.WHITE);
         this.setLayout(new BorderLayout(20, 40));
 
-        //title
+        //TITLE
         JLabel formInputTitle = new JLabel("Form Input Peminjaman");
         formInputTitle.setFont(new Font("Arial", Font.BOLD, 30));
         this.add(formInputTitle, BorderLayout.NORTH);
 
-
-        //body
+        //BODY
         JPanel formInputBody = new JPanel();
         formInputBody.setBackground(Color.WHITE);
         formInputBody.setLayout(new GridLayout(4, 2, 20, 20));
@@ -80,28 +85,10 @@ public class FormInputPeminjaman extends RoundedPanel {
         titleBuku.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 220, 220)));
         formInputBody.add(titleBuku);
 
-        inputNim.setSearchListener((String nim) -> {
-            Mahasiswa mhs = manajemenMhs.cariMhs(nim);
-            if (mhs != null) {
-                inputNim.setInputText(mhs.getNim());
-                inputNamaMhs.setInputText(mhs.getNama());
-                inputProdi.setInputText(mhs.getProdi());
-            } else {
-                JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + nim + " tidak ditemukan.");
-            }
-        });
+        //default
         inputNim.setInputEnabled(true);
         inputNamaMhs.setInputEnabled(false);
         inputProdi.setInputEnabled(false);
-
-        inputKodeBuku.setSearchListener((String kode) -> {
-            Buku buku = manajemenBuku.cariBuku(kode);
-            if (buku != null) {
-                inputKodeBuku.setInputText(buku.getKodeBuku());
-                inputJudulBuku.setInputText(buku.getNamaBuku());
-                inputKategori.setInputText(buku.getKategori());
-            }
-        });
         inputKodeBuku.setInputEnabled(false);
         inputJudulBuku.setInputEnabled(false);
         inputKategori.setInputEnabled(false);
@@ -112,15 +99,70 @@ public class FormInputPeminjaman extends RoundedPanel {
         formInputBody.add(inputJudulBuku);
         formInputBody.add(inputProdi);
         formInputBody.add(inputKategori);
-
         this.add(formInputBody, BorderLayout.CENTER);
 
-        //side button
+
+        inputNim.setSearchListener((String nim) -> {
+            Mahasiswa mhs = manajemenMhs.cariMhs(nim);
+            if (mhs != null) {
+                inputNim.setInputText(mhs.getNim());
+                inputNamaMhs.setInputText(mhs.getNama());
+                inputProdi.setInputText(mhs.getProdi());
+            } else {
+                JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + nim + " tidak ditemukan.");
+            }
+        });
+
+        inputKodeBuku.setSearchListener((String kode) -> {
+            Buku buku = manajemenBuku.cariBuku(kode);
+            if (buku != null) {
+                inputKodeBuku.setInputText(buku.getKodeBuku());
+                inputJudulBuku.setInputText(buku.getNamaBuku());
+                inputKategori.setInputText(buku.getKategori());
+            }
+        });
+
+
+        //SIDE BUTTON
         JPanel formInputButton = new JPanel();
         formInputButton.setLayout(new GridLayout(4, 1, 10, 10));
         formInputButton.setPreferredSize(new Dimension(100, 0));
         formInputButton.setBackground(Color.WHITE);
-
+        //button buat peminjaman
+        buttonAdd.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
+        buttonAdd.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
+        buttonAdd.setMaximumSize(new Dimension(100, 50));
+        formInputButton.add(buttonAdd);
+        //button tambah buku
+        buttonAddBook.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
+        buttonAddBook.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
+        buttonAddBook.setMaximumSize(new Dimension(100, 50));
+        buttonAddBook.setEnabled(false);
+        formInputButton.add(buttonAddBook);
+        //button clear
+        buttonClear.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
+        buttonClear.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
+        buttonClear.setMaximumSize(new Dimension(100, 50));
+        formInputButton.add(buttonClear);
+        this.add(formInputButton, BorderLayout.EAST);
+        
+        //FOOTER CONFIRM
+        JPanel formInputConfirm = new JPanel();
+        formInputConfirm.setBackground(Color.WHITE);
+        formInputConfirm.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        //button cancel
+        buttonCancel.setBackground(Color.decode("#c2255c"));
+        buttonCancel.setForeground(Color.decode("#ffffff"));
+        buttonCancel.setEnabled(false);
+        formInputConfirm.add(buttonCancel);
+        //button save
+        buttonSave.setBackground(Color.decode("#2f9e44"));
+        buttonSave.setForeground(Color.decode("#ffffff"));
+        buttonSave.setEnabled(false);
+        formInputConfirm.add(buttonSave);
+        this.add(formInputConfirm, BorderLayout.SOUTH);
+        
+        //LISTENER, ACTION
         buttonAdd.addActionListener(e -> {
             if (!(inputNim.getInputText().isEmpty() || inputNamaMhs.getInputText().isEmpty() || inputProdi.getInputText().isEmpty())) {
                 setMode("add");
@@ -128,11 +170,6 @@ public class FormInputPeminjaman extends RoundedPanel {
                 JOptionPane.showMessageDialog(null, "Peminjam harus diisi");
             }
         });
-
-        buttonAdd.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
-        buttonAdd.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
-        buttonAdd.setMaximumSize(new Dimension(100, 50));
-        formInputButton.add(buttonAdd);
 
         buttonAddBook.addActionListener(e -> {
             if (!(inputKodeBuku.getInputText().isEmpty() || inputJudulBuku.getInputText().isEmpty() || inputKategori.getInputText().isEmpty())) {
@@ -144,36 +181,13 @@ public class FormInputPeminjaman extends RoundedPanel {
             }
         });
 
-        buttonAddBook.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
-        buttonAddBook.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
-        buttonAddBook.setMaximumSize(new Dimension(100, 50));
-        buttonAddBook.setEnabled(false);
-        formInputButton.add(buttonAddBook);
-
-        buttonClear.addActionListener(e -> {
-            clearForm();
-        });
-        
-        buttonClear.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
-        buttonClear.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
-        buttonClear.setMaximumSize(new Dimension(100, 50));
-        formInputButton.add(buttonClear);
-        this.add(formInputButton, BorderLayout.EAST);
-
-        JPanel formInputConfirm = new JPanel();
-        formInputConfirm.setBackground(Color.WHITE);
-        formInputConfirm.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        buttonClear.addActionListener(e -> clearForm());
 
         buttonCancel.addActionListener(e -> {
             clearForm();
             setMode("");
         });
 
-        buttonCancel.setBackground(Color.decode("#c2255c"));
-        buttonCancel.setForeground(Color.decode("#ffffff"));
-        buttonCancel.setEnabled(false);
-        formInputConfirm.add(buttonCancel);
-        
         buttonSave.addActionListener(e -> {
             if (!PeminjamanFormPage.daftarBuku.isEmpty()) {
                 
@@ -188,24 +202,21 @@ public class FormInputPeminjaman extends RoundedPanel {
                 boolean success = manajemenPeminjaman.prosesPeminjaman(mhs, daftarBukuSet, durasiPeminjaman);
 
                 if (success) {
-                    JOptionPane.showMessageDialog(null, "Peminjaman berhasil disimpan");
+                    JOptionPane.showMessageDialog(this, "Peminjaman berhasil disimpan");
                 } else {
-                    JOptionPane.showMessageDialog(null, "Peminjaman gagal disimpan");
+                    JOptionPane.showMessageDialog(this, "Peminjaman gagal disimpan");
                 }
                 
+                PeminjamanFormPage.daftarBuku.clear();
                 onSaveSuccess.run();
                 clearForm();
                 setMode("");
             } else {
-                JOptionPane.showMessageDialog(null, "Tidak ada buku terdeteksi");
+                JOptionPane.showMessageDialog(this, "Tidak ada buku di keranjang");
             }
+
         });
 
-        buttonSave.setBackground(Color.decode("#2f9e44"));
-        buttonSave.setForeground(Color.decode("#ffffff"));
-        buttonSave.setEnabled(false);
-        formInputConfirm.add(buttonSave);
-        this.add(formInputConfirm, BorderLayout.SOUTH);
 
         updateFormUI();
     }
@@ -216,7 +227,6 @@ public class FormInputPeminjaman extends RoundedPanel {
     }
 
     private void updateFormUI() {
-        
         switch(this.mode) {
             case "add" -> {
                 buttonAdd.setEnabled(false);

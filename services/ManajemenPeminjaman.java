@@ -36,15 +36,18 @@ public class ManajemenPeminjaman extends PeminjamanService {
 
     public void tambahPeminjaman(Peminjaman peminjamanBaru) {
         this.daftarPeminjaman = fhPeminjaman.bacaData();
-        daftarPeminjaman.put(peminjamanBaru.getKodePeminjaman(), peminjamanBaru);
+
+        this.daftarPeminjaman.put(peminjamanBaru.getKodePeminjaman(), peminjamanBaru);
         manajemenMahasiswa.editMhs(peminjamanBaru.getMhs());
-        fhPeminjaman.simpanData(daftarPeminjaman);
+        fhPeminjaman.simpanData(this.daftarPeminjaman);
     }
 
     public void hapusPeminjaman(int kodePeminjaman) {
-        if (daftarPeminjaman.containsKey(kodePeminjaman)) {
-            daftarPeminjaman.remove(kodePeminjaman);
-            fhPeminjaman.simpanData(daftarPeminjaman);
+        this.daftarPeminjaman = fhPeminjaman.bacaData();
+
+        if (this.daftarPeminjaman.containsKey(kodePeminjaman)) {
+            this.daftarPeminjaman.remove(kodePeminjaman);
+            fhPeminjaman.simpanData(this.daftarPeminjaman);
         } else {
             System.out.println("Peminjaman dengan kode " + kodePeminjaman + " tidak ditemukan dalam daftar aktif.");
         }
@@ -99,34 +102,39 @@ public class ManajemenPeminjaman extends PeminjamanService {
         return true;
     }
 
-    public void prosesPengembalian(int kodePeminjaman) {
-        Peminjaman peminjaman = daftarPeminjaman.get(kodePeminjaman);
-        if (peminjaman != null && peminjaman.getStatus().equals("Dipinjam")) {
-            peminjaman.setTanggalKembali(LocalDate.now());
-            peminjaman.periksaKeterlambatan();
-            peminjaman.setStatus("Dikembalikan");
-            peminjaman.setDikembalikan(true);
+    public boolean prosesPengembalian(int kodePeminjaman) {
+        this.daftarPeminjaman = fhPeminjaman.bacaData();
+        Peminjaman peminjaman = this.daftarPeminjaman.get(kodePeminjaman);
 
-            Mahasiswa mhs = peminjaman.getMhs();
-            for (Buku buku : peminjaman.getDaftarBukuDipinjam()) {
-                buku.tambahStok();
-                //x
-                manajemenBuku.editBuku(buku);
-                //x
-                mhs.kembaliPinjaman(buku);
-            }
+        //terlambat atau tidak, tetap bisa mengembalikan buku
+        peminjaman.setTanggalKembali(LocalDate.now());
+        peminjaman.setStatus("Dikembalikan");
+        peminjaman.setDikembalikan(true);
 
-            fhRiwayat.tambahRiwayat(peminjaman);
-            hapusPeminjaman(kodePeminjaman);
+        Mahasiswa mhs = peminjaman.getMhs();
 
-            System.out.println("Pengembalian untuk kode peminjaman " + kodePeminjaman + " berhasil diproses dan dipindahkan ke riwayat.");
-
-        } else if (peminjaman != null && peminjaman.getStatus().equals("Dikembalikan")) {
-            System.out.println("Peminjaman dengan kode " + kodePeminjaman + " sudah dikembalikan sebelumnya.");
-        } else {
-            System.out.println("Peminjaman dengan kode " + kodePeminjaman + " tidak ditemukan atau sudah dikembalikan.");
+        for (Buku buku : peminjaman.getDaftarBukuDipinjam()) {
+            //perbarui stok buku yang dikembalikan
+            buku.tambahStok();
+            manajemenBuku.editBuku(buku);
+            mhs.kembaliPinjaman(buku.getKodeBuku());
         }
+
+        //perbarui daftar buku mahasiswa
+        manajemenMahasiswa.editMhs(mhs);
+        fhRiwayat.tambahRiwayat(peminjaman);
+
+        this.hapusPeminjaman(kodePeminjaman);
+        
+        return mhs.getKenaDenda();
     }
+
+    public Peminjaman cariPeminjaman(int kodePeminjaman) {
+        this.daftarPeminjaman = fhPeminjaman.bacaData();
+        return daftarPeminjaman.get(kodePeminjaman);
+    }
+
+
     public int generateKode() {
         Random rand = new Random();
         int kode = 0;
@@ -161,18 +169,27 @@ public class ManajemenPeminjaman extends PeminjamanService {
 
     @Override
     public void periksaKeterlambatan(Integer kodePeminjaman) {
+        double dendaPerBuku = 10000;
         this.daftarPeminjaman = fhPeminjaman.bacaData();
+        Peminjaman peminjaman = this.daftarPeminjaman.get(kodePeminjaman);
+        Mahasiswa mhs = peminjaman.getMhs();
 
-        if (LocalDate.now().isAfter(this.daftarPeminjaman.get(kodePeminjaman).getBatasTanggalKembali())) {
-            this.daftarPeminjaman.get(kodePeminjaman).setStatus("Terlambat");
+        //ketika pertama kali terlambat
+        if (LocalDate.now().isAfter(peminjaman.getBatasTanggalKembali()) && !mhs.getKenaDenda()) {
+            peminjaman.setStatus("Terlambat");
+            mhs.setKenaDenda(true);
+            mhs.tambahDenda(dendaPerBuku * peminjaman.getDaftarBukuDipinjam().size());
+            manajemenMahasiswa.editMhs(mhs);
 
-            Peminjaman pem = this.daftarPeminjaman.get(kodePeminjaman);
-            pem.getMhs().setKenaDenda(true);
-            pem.getMhs().setDenda(10000 * pem.getDaftarBukuDipinjam().size());
-            manajemenMahasiswa.editMhs(pem.getMhs());
-        } else {
-            daftarPeminjaman.get(kodePeminjaman).setStatus("Dipinjam");
+        //ketika aman
+        } else if (LocalDate.now().isBefore(peminjaman.getBatasTanggalKembali())) {
+            peminjaman.setStatus("Dipinjam");
         }
+
+        /*
+            Yang sudah terlambat statusnya tetap terlambat dan kena denda tetap true
+            perubahan status denda berada di proses pengembalian
+        */
         
         fhPeminjaman.simpanData(this.daftarPeminjaman);
     }

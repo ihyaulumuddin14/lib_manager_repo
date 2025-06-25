@@ -20,24 +20,29 @@ import src.components.ComboBoxInput;
 import src.components.RoundedButton;
 import src.components.RoundedPanel;
 import src.components.SearchInput;
-import src.pages.BukuFormPage;
 
 public class FormInputBuku extends RoundedPanel {
     final String SELECTED_NAV_BTN_COLOR = "#343a40";
     final String SELECTED_NAV_BTN_TEXT_COLOR = "#e9ecef";
+
+    //elemen input
     SearchInput inputKode = new SearchInput("Kode Buku", "Cari");
     BasicInput inputNama = new BasicInput("Nama Buku");
     BasicInput inputPenulis = new BasicInput("Penulis (ex: Raditya Dika, Henry Manampiring, ...)");
     BasicInput inputStok = new BasicInput("Stok");
     BasicInput inputTahunTerbit = new BasicInput("Tahun Terbit");
     ComboBoxInput inputKategori = new ComboBoxInput("Kategori", new String[]{"Fantasi", "Horor", "Fiksi", "Pendidikan", "Sejarah", "Sains"});
-    FileHandlerBuku fhBuku = new FileHandlerBuku();
+
+    //button
     RoundedButton buttonAdd = new RoundedButton("Tambah");
     RoundedButton buttonEdit = new RoundedButton("Edit");
     RoundedButton buttonDelete = new RoundedButton("Hapus");
     RoundedButton buttonClear = new RoundedButton("Clear");
     RoundedButton buttonCancel = new RoundedButton("Batal");
     RoundedButton buttonSave = new RoundedButton("Simpan");
+
+    //manajemen
+    FileHandlerBuku fhBuku = new FileHandlerBuku();
     ManajemenBuku manajemenBuku = new ManajemenBuku(fhBuku);
     Runnable onSaveSuccess;
     String mode = "";
@@ -50,17 +55,68 @@ public class FormInputBuku extends RoundedPanel {
         this.setBackground(Color.WHITE);
         this.setLayout(new BorderLayout(20, 40));
 
-        //title
+        //TITLE
         JLabel formInputTitle = new JLabel("Form Input Buku");
         formInputTitle.setFont(new Font("Arial", Font.BOLD, 30));
         this.add(formInputTitle, BorderLayout.NORTH);
 
-        //body
+        //BODY
         JPanel formInputBody = new JPanel();
         formInputBody.setBackground(Color.WHITE);
         formInputBody.setLayout(new GridLayout(3, 2, 20, 20));
+        formInputBody.add(inputKode);
+        formInputBody.add(inputNama);
+        formInputBody.add(inputPenulis);
+        formInputBody.add(inputStok);
+        formInputBody.add(inputTahunTerbit);
+        formInputBody.add(inputKategori);
+        this.add(formInputBody, BorderLayout.CENTER);
 
-        //listener cari buku
+        //SIDE BUTTON
+        JPanel formInputButton = new JPanel();
+        formInputButton.setLayout(new GridLayout(4, 1, 0, 10)); // 4 baris, 10px antar baris
+        formInputButton.setPreferredSize(new Dimension(200, 0));
+        formInputButton.setBackground(Color.WHITE);
+        //button add
+        buttonAdd.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
+        buttonAdd.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
+        buttonAdd.setMaximumSize(new Dimension(200, 50));
+        formInputButton.add(buttonAdd);
+        //button edit
+        buttonEdit.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
+        buttonEdit.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
+        buttonEdit.setMaximumSize(new Dimension(200, 50));
+        formInputButton.add(buttonEdit);
+        //button delete
+        buttonDelete.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
+        buttonDelete.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
+        buttonDelete.setMaximumSize(new Dimension(200, 50));
+        buttonDelete.setEnabled(false);
+        formInputButton.add(buttonDelete);
+        //button clear
+        buttonClear.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
+        buttonClear.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
+        buttonClear.setMaximumSize(new Dimension(200, 50));
+        formInputButton.add(buttonClear);
+        this.add(formInputButton, BorderLayout.EAST);
+
+        //FOOTER, CONFIRM BUTTON
+        JPanel formInputConfirm = new JPanel();
+        formInputConfirm.setBackground(Color.WHITE);
+        formInputConfirm.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        //button cancel
+        buttonCancel.setBackground(Color.decode("#c2255c"));
+        buttonCancel.setForeground(Color.decode("#ffffff"));
+        buttonCancel.setEnabled(false);
+        formInputConfirm.add(buttonCancel);
+        //button save
+        buttonSave.setBackground(Color.decode("#2f9e44"));
+        buttonSave.setForeground(Color.decode("#ffffff"));
+        buttonSave.setEnabled(false);
+        formInputConfirm.add(buttonSave);
+        this.add(formInputConfirm, BorderLayout.SOUTH);
+
+        //LISTENER, ACTION
         inputKode.setSearchListener((String kode) -> {
             Buku buku = manajemenBuku.cariBuku(kode);
             if (buku != null) {
@@ -73,97 +129,55 @@ public class FormInputBuku extends RoundedPanel {
             }
         });
 
-        formInputBody.add(inputKode);
-        formInputBody.add(inputNama);
-        formInputBody.add(inputPenulis);
-        formInputBody.add(inputStok);
-        formInputBody.add(inputTahunTerbit);
-        formInputBody.add(inputKategori);
-        this.add(formInputBody, BorderLayout.CENTER);
-
-        //side button
-        JPanel formInputButton = new JPanel();
-        formInputButton.setLayout(new GridLayout(4, 1, 0, 10)); // 4 baris, 10px antar baris
-        formInputButton.setPreferredSize(new Dimension(200, 0));
-        formInputButton.setBackground(Color.WHITE);
-
-        buttonAdd.addActionListener(e -> {
-            setMode("add");
-        });
-
-        buttonAdd.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
-        buttonAdd.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
-        buttonAdd.setMaximumSize(new Dimension(200, 50));
-        formInputButton.add(buttonAdd);
+        buttonAdd.addActionListener(e -> setMode("add"));
 
         buttonEdit.addActionListener(e -> {
-            setMode("edit");
+            if (validateInput()) {
+                setMode("edit");
+            } else {
+                JOptionPane.showMessageDialog(this, "Tidak ada buku yang dipilih.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            }
         });
         
-        buttonEdit.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
-        buttonEdit.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
-        buttonEdit.setMaximumSize(new Dimension(200, 50));
-        formInputButton.add(buttonEdit);
-
         buttonDelete.addActionListener(e -> {
-            setMode("delete");
+            if (validateInput()) {
+                setMode("delete");
+            } else {
+                JOptionPane.showMessageDialog(this, "Tidak ada buku yang dipilih.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            }
         });
 
-        buttonDelete.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
-        buttonDelete.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
-        buttonDelete.setMaximumSize(new Dimension(200, 50));
-        buttonDelete.setEnabled(false);
-        formInputButton.add(buttonDelete);
-        
-        buttonClear.addActionListener(e -> {
-            clearForm();
-        });
+        buttonClear.addActionListener(e -> clearForm());
 
-        buttonClear.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
-        buttonClear.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
-        buttonClear.setMaximumSize(new Dimension(200, 50));
-        formInputButton.add(buttonClear);
-        this.add(formInputButton, BorderLayout.EAST);
-
-        JPanel formInputConfirm = new JPanel();
-        formInputConfirm.setBackground(Color.WHITE);
-        formInputConfirm.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
-
-        //confirm button
         buttonCancel.addActionListener(e -> {
             setMode("");
         });
-
-        buttonCancel.setBackground(Color.decode("#c2255c"));
-        buttonCancel.setForeground(Color.decode("#ffffff"));
-        buttonCancel.setEnabled(false);
-        formInputConfirm.add(buttonCancel);
         
         buttonSave.addActionListener(e -> {
             if ((validateInput() && this.mode.equals("add")) || (validateInput() && !inputKode.getInputText().isEmpty())) {
                 try {
                     switch (this.mode) {
                         case "add" -> {
-                            boolean success = manajemenBuku.tambahBuku(getInputData());
+                            boolean success = manajemenBuku.tambahBuku(createBuku());
     
                             if (success) {
-                                JOptionPane.showMessageDialog(new BukuFormPage(), "Buku berhasil ditambahkan.");
+                                JOptionPane.showMessageDialog(this, "Buku berhasil ditambahkan.");
                             } else {
-                                JOptionPane.showMessageDialog(new BukuFormPage(), "Gagal menambahkan buku.", "Failed", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(this, "Gagal menambahkan buku.", "Failed", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                         case "edit" -> {
-                            Buku buku = getInputData(inputKode.getInputText());
+                            Buku buku = createBuku();
                             manajemenBuku.editBuku(buku);
-                            JOptionPane.showMessageDialog(new BukuFormPage(), "Buku berhasil diedit.");
+                            JOptionPane.showMessageDialog(this, "Buku berhasil diedit.");
                         }
                         case "delete" -> {
                             boolean success = manajemenBuku.hapusBuku(inputKode.getInputText());
     
                             if (success) {
-                                JOptionPane.showMessageDialog(new BukuFormPage(), "Buku berhasil dihapus.");
+                                JOptionPane.showMessageDialog(this, "Buku berhasil dihapus.");
                             } else {
-                                JOptionPane.showMessageDialog(new BukuFormPage(), "Gagal menghapus buku.", "Failed", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(this, "Gagal menghapus buku.", "Failed", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                         default -> {}
@@ -173,22 +187,16 @@ public class FormInputBuku extends RoundedPanel {
                         onSaveSuccess.run();
                     }
                 } catch (Exception err) {
-                    JOptionPane.showMessageDialog(new BukuFormPage(), err.getMessage());
+                    JOptionPane.showMessageDialog(this, err.getMessage());
                 } finally {
                     setMode("");
                     clearForm();
                 }
             } else {
-                JOptionPane.showMessageDialog(new BukuFormPage(), "Semua field harus diisi!");
+                JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
             }
 
         });
-
-        buttonSave.setBackground(Color.decode("#2f9e44"));
-        buttonSave.setForeground(Color.decode("#ffffff"));
-        buttonSave.setEnabled(false);
-        formInputConfirm.add(buttonSave);
-        this.add(formInputConfirm, BorderLayout.SOUTH);
 
         updateFormUI();
     }
@@ -201,7 +209,6 @@ public class FormInputBuku extends RoundedPanel {
     private void updateFormUI() {
         switch (this.mode) {
             case "add" -> {
-                clearForm();
                 buttonAdd.setEnabled(false);
                 buttonEdit.setEnabled(false);
                 buttonDelete.setEnabled(false);
@@ -269,26 +276,15 @@ public class FormInputBuku extends RoundedPanel {
         this.inputKategori.clearForm();
     }
 
-    private Buku getInputData() {
-        Set<String> penulis = new HashSet<>();
-        String[] penulisArr = inputPenulis.getInputText().split(",");
-        if (penulisArr.length != 0) {
-            for (String p : penulisArr) {
-                penulis.add(p.trim());
-            }
-        }
-        
-        return new Buku(
-                manajemenBuku.generateKode(),
-                inputNama.getInputText(),
-                penulis,
-                Integer.parseInt(inputStok.getInputText()),
-                Integer.parseInt(inputTahunTerbit.getInputText()),
-                inputKategori.getInputText()
-                );
-    }
+    private Buku createBuku() {
+        String kode;
 
-    private Buku getInputData(String kode) {
+        if (inputKode.getInputText().isEmpty()) {
+            kode = manajemenBuku.generateKode();
+        } else {
+            kode = inputKode.getInputText();
+        }
+
         Set<String> penulis = new HashSet<>();
         String[] penulisArr = inputPenulis.getInputText().split(",");
         if (penulisArr.length != 0) {

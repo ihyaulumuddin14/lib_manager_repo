@@ -86,19 +86,18 @@ public class PeminjamanFormPage extends JPanel {
         statWrapper.setBackground(Color.decode(DEFAULT_BG_COLOR));
         statWrapper.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
-        statPanel.setLayout(new BorderLayout(0, 20));
+        statPanel.setLayout(new BorderLayout(0, 50));
         statPanel.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
         statPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         //header
-        JLabel statLabel = new JLabel("Daftar Buku: ");
+        JLabel statLabel = new JLabel("Keranjang Buku:");
         statLabel.setForeground(Color.WHITE);
-        statLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        statLabel.setFont(new Font("Arial", Font.BOLD, 30));
         statPanel.add(statLabel, BorderLayout.NORTH);
 
         //body
         loadKeranjang();
-        
 
         statWrapper.add(statPanel, BorderLayout.CENTER);
         this.add(statWrapper, gbc);

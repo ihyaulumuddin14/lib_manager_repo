@@ -7,17 +7,10 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import models.Buku;
 import models.Mahasiswa;
 import models.Peminjaman;
 import services.ManajemenBuku;
@@ -29,9 +22,7 @@ import src.components.RoundedButton;
 import src.components.RoundedPanel;
 import src.components.SearchInput;
 import src.custom_listener.AddBookOnCart;
-import src.pages.BukuFormPage;
 import src.pages.MahasiswaFormPage;
-import src.pages.PengembalianFormPage;
 
 public class FormInputPengembalian extends RoundedPanel {
     final String SELECTED_NAV_BTN_COLOR = "#343a40";
@@ -66,13 +57,12 @@ public class FormInputPengembalian extends RoundedPanel {
         this.setBackground(Color.WHITE);
         this.setLayout(new BorderLayout(20, 40));
 
-        //title
+        //TITLE
         JLabel formInputTitle = new JLabel("Form Input Pengembalian");
         formInputTitle.setFont(new Font("Arial", Font.BOLD, 30));
         this.add(formInputTitle, BorderLayout.NORTH);
 
-
-        //body
+        //BODY
         JPanel formInputBody = new JPanel();
         formInputBody.setBackground(Color.WHITE);
         formInputBody.setLayout(new GridLayout(4, 2, 20, 20));
@@ -100,61 +90,77 @@ public class FormInputPengembalian extends RoundedPanel {
         inputProdi.setInputEnabled(false);
         this.add(formInputBody, BorderLayout.CENTER);
 
-
         formInputBody.add(inputNim);
         formInputBody.add(inputNamaMhs);
         formInputBody.add(inputProdi);
-
         this.add(formInputBody, BorderLayout.CENTER);
 
-        //side button
+        //SIDE BUTTON
         JPanel formInputButton = new JPanel();
         formInputButton.setLayout(new GridLayout(4, 1, 10, 10));
         formInputButton.setPreferredSize(new Dimension(100, 0));
         formInputButton.setBackground(Color.WHITE);
-
+        //button add
+        buttonAdd.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
+        buttonAdd.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
+        buttonAdd.setMaximumSize(new Dimension(100, 50));
+        formInputButton.add(buttonAdd);
+        //button clear
+        buttonClear.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
+        buttonClear.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
+        buttonClear.setMaximumSize(new Dimension(100, 50));
+        formInputButton.add(buttonClear);
+        this.add(formInputButton, BorderLayout.EAST);
+        
+        //CONFIRM BUTTON, FOOTER            
+        JPanel formInputConfirm = new JPanel();
+        formInputConfirm.setBackground(Color.WHITE);
+        formInputConfirm.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        //button cancel
+        buttonCancel.setBackground(Color.decode("#c2255c"));
+        buttonCancel.setForeground(Color.decode("#ffffff"));
+        buttonCancel.setEnabled(false);
+        formInputConfirm.add(buttonCancel);
+        //button save
+        buttonSave.setBackground(Color.decode("#2f9e44"));
+        buttonSave.setForeground(Color.decode("#ffffff"));
+        buttonSave.setEnabled(false);
+        formInputConfirm.add(buttonSave);
+        this.add(formInputConfirm, BorderLayout.SOUTH);
+        
+        //LISTENER, ACTION
         buttonAdd.addActionListener(e -> {
             if (!(inputNim.getInputText().isEmpty() || inputNamaMhs.getInputText().isEmpty() || inputProdi.getInputText().isEmpty())) {
                 setMode("add");
             }
         });
 
-        buttonAdd.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
-        buttonAdd.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
-        buttonAdd.setMaximumSize(new Dimension(100, 50));
-        formInputButton.add(buttonAdd);
-
-
-        
         buttonClear.addActionListener(e -> {
             clearForm();
         });
-        
-        buttonClear.setBackground(Color.decode(SELECTED_NAV_BTN_COLOR));
-        buttonClear.setForeground(Color.decode(SELECTED_NAV_BTN_TEXT_COLOR));
-        buttonClear.setMaximumSize(new Dimension(100, 50));
-        formInputButton.add(buttonClear);
-        this.add(formInputButton, BorderLayout.EAST);
-
-        JPanel formInputConfirm = new JPanel();
-        formInputConfirm.setBackground(Color.WHITE);
-        formInputConfirm.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
 
         buttonCancel.addActionListener(e -> {
             clearForm();
             setMode("");
         });
 
-        buttonCancel.setBackground(Color.decode("#c2255c"));
-        buttonCancel.setForeground(Color.decode("#ffffff"));
-        buttonCancel.setEnabled(false);
-        formInputConfirm.add(buttonCancel);
-        
         buttonSave.addActionListener(e -> {
             if (selectedKodePeminjaman != null && !selectedKodePeminjaman.isEmpty()) {
-                // pake selectedKodePeminjaman dari bagian kodee scrollpane PengembalianFormPage
-                manajemenPeminjaman.prosesPengembalian(Integer.parseInt(selectedKodePeminjaman));
-                
+
+                //selectedKodePeminjaman dari bagian kode scrollpane PengembalianFormPage
+                Peminjaman peminjaman = manajemenPeminjaman.cariPeminjaman(Integer.valueOf(selectedKodePeminjaman));
+                boolean isDenda = manajemenPeminjaman.prosesPengembalian(Integer.valueOf(selectedKodePeminjaman));
+
+                if (isDenda) {
+                    JOptionPane.showInputDialog(null, "Mahasiswa dengan NIM " + inputNim.getInputText() + " telah terlambat. Mohon segera membayar denda sebesar Rp." + peminjaman.getMhs().getDenda(), "Peringatan", JOptionPane.WARNING_MESSAGE);
+                    peminjaman.getMhs().resetDenda();
+                    peminjaman.getMhs().setKenaDenda(false);
+                    manajemenMhs.editMhs(peminjaman.getMhs());
+                    JOptionPane.showMessageDialog(null, "Denda berhasil terbayar", "Success", JOptionPane.OK_OPTION);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Pengembalian buku berhasil.");
+                }
+
                 onSaveSuccess.run();
                 clearForm();
                 setMode("");
@@ -162,12 +168,7 @@ public class FormInputPengembalian extends RoundedPanel {
                 JOptionPane.showMessageDialog(null, "Silakan pilih data peminjaman dari tabel terlebih dahulu.");
             }
         });
-        buttonSave.setBackground(Color.decode("#2f9e44"));
-        buttonSave.setForeground(Color.decode("#ffffff"));
-        buttonSave.setEnabled(false);
-        formInputConfirm.add(buttonSave);
-        this.add(formInputConfirm, BorderLayout.SOUTH);
-
+        
         updateFormUI();
     }
 

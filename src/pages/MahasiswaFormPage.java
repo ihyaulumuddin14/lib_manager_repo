@@ -12,16 +12,17 @@ import models.Mahasiswa;
 import services.ManajemenMahasiswa;
 import src.components.RoundedPanel;
 import src.fragments.DataScrollPane;
-import src.fragments.FormInputMhs;
+import src.fragments.FormInputMahasiswa;
 import src.fragments.StatistikPeminjaman;
 
 public class MahasiswaFormPage extends JPanel {
     final String DEFAULT_BG_COLOR = "#868e96";
-    final String SELECTED_NAV_BTN_COLOR = "#343a40";
     String[] columns = {"NIM", "Nama", "Program Studi", "Status"};
+
+    
     RoundedPanel tablePanel;
     DataScrollPane scrollPane;
-    FormInputMhs formInputPanel;
+    FormInputMahasiswa formInputPanel;
     static RoundedPanel statPanel;
     static JPanel statWrapper;
     FileHandlerMahasiswa fhMhs = new FileHandlerMahasiswa();
@@ -47,7 +48,7 @@ public class MahasiswaFormPage extends JPanel {
         this.add(formInputWrapper, gbc);
 
         //form input panel yang warna putih rounded
-        formInputPanel = new FormInputMhs(() -> {
+        formInputPanel = new FormInputMahasiswa(() -> {
             refreshTable();
         });
         formInputWrapper.add(formInputPanel, BorderLayout.CENTER);
@@ -100,6 +101,7 @@ public class MahasiswaFormPage extends JPanel {
         String[][] data = new String[daftarMahasiswa.size()][4];
         int i = 0;
 
+        //update data tabel
         for (Map.Entry<String, Mahasiswa> mhs : daftarMahasiswa.entrySet()) {
             String nim = mhs.getKey();
             String nama = mhs.getValue().getNama();
@@ -110,14 +112,13 @@ public class MahasiswaFormPage extends JPanel {
             data[i++] = dataMhsPerRow;
         }
 
+        //hapus dulu scrollpane lama jika ada
         if (scrollPane != null) tablePanel.remove(scrollPane);
-            scrollPane = new DataScrollPane(columns, data, (nimData) -> {
-            String nim = nimData;
-
-            Mahasiswa mhs = manajemenMhs.cariMhs(nim);
-
+        
+        //callback onclick scrollpane
+        scrollPane = new DataScrollPane(columns, data, (nimData) -> {
+            Mahasiswa mhs = manajemenMhs.cariMhs(nimData);
             formInputPanel.setFieldInput(mhs.getNim(), mhs.getNama(), mhs.getProdi());
-
             refreshStatistik(mhs);
         });
         tablePanel.add(scrollPane, BorderLayout.CENTER);
@@ -126,9 +127,14 @@ public class MahasiswaFormPage extends JPanel {
     }
 
     public static void refreshStatistik(Mahasiswa mhs) {
-        statWrapper.remove(statPanel);
+        //hapus dulu panel statistik lama
+        if (statPanel != null) statWrapper.remove(statPanel);
+
+        //perbarui
         statPanel = new StatistikPeminjaman(mhs);
         statWrapper.add(statPanel, BorderLayout.CENTER);
+
+        //rerender ui
         statWrapper.revalidate();
         statWrapper.repaint();
     }

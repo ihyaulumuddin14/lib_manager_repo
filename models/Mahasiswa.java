@@ -1,5 +1,7 @@
 package models;
+import filehandler.FileHandlerBuku;
 import java.util.*;
+import services.ManajemenBuku;
 
 public class Mahasiswa {
     private String nim = "";
@@ -8,6 +10,7 @@ public class Mahasiswa {
     private Set<Buku> daftarBuku;
     private boolean kenaDenda;
     private double nominalDenda;
+    private ManajemenBuku manajemenBuku = new ManajemenBuku(new FileHandlerBuku());
 
     public Mahasiswa() {}
 
@@ -47,11 +50,21 @@ public class Mahasiswa {
     public void setDenda(double nominalDenda) {
         this.nominalDenda = nominalDenda;
     }
+    public void tambahDenda(double nominalDenda) {
+        this.nominalDenda += nominalDenda;
+    }
+    public void resetDenda() {
+        this.nominalDenda = 0;
+    }
     public void tambahPinjaman(Buku buku) {
         this.daftarBuku.add(buku);
     }
-    public void kembaliPinjaman(Buku buku) {
-        this.daftarBuku.remove(buku);
+    public void kembaliPinjaman(String kodeBuku) {
+        for (Buku buku : this.daftarBuku) {
+            if (buku.getKodeBuku().equals(kodeBuku)) {
+                this.daftarBuku.remove(buku);
+            }
+        }
     }
     public void setDaftarBuku(Set<Buku> daftarBuku) {
         this.daftarBuku = daftarBuku;

@@ -1,11 +1,5 @@
 package filehandler;
 
-import models.Buku;
-import models.Mahasiswa;
-import models.Peminjaman;
-import services.ManajemenBuku;
-import services.ManajemenMahasiswa;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,6 +11,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
+import models.Buku;
+import models.Mahasiswa;
+import models.Peminjaman;
+import services.ManajemenBuku;
+import services.ManajemenMahasiswa;
 
 public class FileHandlerRiwayat {
     private String NAMA_FILE = "database/tbl_riwayat_peminjaman.txt";
@@ -47,7 +46,6 @@ public class FileHandlerRiwayat {
             for (Buku buku : peminjaman.getDaftarBukuDipinjam()) {
                 daftarKodeBuku.add(buku.getKodeBuku());
             }
-
             writer.write(peminjaman.getKodePeminjaman() + DELIMITER);
             writer.write(peminjaman.getMhs().getNim() + DELIMITER);
             writer.write(daftarKodeBuku.toString() + DELIMITER);
@@ -114,7 +112,6 @@ public class FileHandlerRiwayat {
         if (tbl_riwayat_peminjaman.exists()) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(tbl_riwayat_peminjaman))) {
                 writer.write("");
-                System.out.println("Riwayat peminjaman berhasil dihapus.");
             } catch (Exception e) {
                 e.printStackTrace();
             }

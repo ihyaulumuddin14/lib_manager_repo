@@ -1,6 +1,2 @@
-<<<<<<< HEAD
-110|person1|Teknik Informatika|BK2681,BK1935|false|0.0
-245|test1|Sistem Informasi|BK1935,BK2681|false|0.0
-245150207111044|Muhammad Gathan Raka|Teknik Informatika|BK2681,BK1935|false|0.0
-=======
->>>>>>> 5632e0d483fab0e2bef34fb6c101dbd9ab110780
+1234|Budi|Teknik Informatika||false|10000.0
+245150201111024|Ulum|Teknik Komputer||false|0.0
