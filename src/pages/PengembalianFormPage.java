@@ -66,6 +66,7 @@ public class PengembalianFormPage extends JPanel {
         this.add(formInputWrapper, gbc);
 
         formInputPanel = new FormInputPengembalian(() -> {
+            refreshStatistik(new Peminjaman());
             refreshTable();
         });
         formInputWrapper.add(formInputPanel, BorderLayout.CENTER);
@@ -147,16 +148,16 @@ public class PengembalianFormPage extends JPanel {
             //x
             formInputPanel.setSelectedKodePeminjaman(kodePeminjaman);
             //x
-            refreshStatistik(mhs);
+            refreshStatistik(peminjaman);
         });
         tablePanel.add(scrollPane, BorderLayout.CENTER);
         tablePanel.revalidate();
         tablePanel.repaint();
     }
 
-    public static void refreshStatistik(Mahasiswa mhs) {
+    public static void refreshStatistik(Peminjaman pem) {
         statWrapper.remove(statPanel);
-        statPanel = new StatistikPeminjaman(mhs);
+        statPanel = new StatistikPeminjaman(pem);
         statWrapper.add(statPanel, BorderLayout.CENTER);
         statWrapper.revalidate();
         statWrapper.repaint();

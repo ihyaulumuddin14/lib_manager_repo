@@ -1,2 +1,1 @@
-1234|Budi|Teknik Informatika||false|10000.0
-245150201111024|Ulum|Teknik Komputer||false|0.0
+1234|Budi|Teknik Informatika||true|10000.0

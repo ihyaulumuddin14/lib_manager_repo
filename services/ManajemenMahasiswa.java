@@ -19,10 +19,6 @@ public class ManajemenMahasiswa extends MahasiswaService {
         //gagal jika nim sudah ada
         if (this.daftarMahasiswa.containsKey(mhs.getNim())) return false;
 
-        //setting ke default
-        mhs.setKenaDenda(false);
-        mhs.resetDenda();
-
         daftarMahasiswa.put(mhs.getNim(),mhs);
         fhMahasiswa.simpanData(daftarMahasiswa);
         return true;

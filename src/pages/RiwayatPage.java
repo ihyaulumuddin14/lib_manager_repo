@@ -68,7 +68,7 @@ public class RiwayatPage extends JPanel {
         deleteAllButton.addActionListener(e -> {
             manajemenPeminjaman.hapusSeluruhRiwayat();
             refreshTable();
-            JOptionPane.showMessageDialog(this, "Semua riwayat berhasil dihapus.");
+            JOptionPane.showMessageDialog(null, "Semua riwayat berhasil dihapus.");
         });
     }
     

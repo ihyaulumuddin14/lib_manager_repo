@@ -119,8 +119,7 @@ public class ManajemenPeminjaman extends PeminjamanService {
             manajemenBuku.editBuku(buku);
             mhs.kembaliPinjaman(buku.getKodeBuku());
         }
-
-        //perbarui daftar buku mahasiswa
+        
         manajemenMahasiswa.editMhs(mhs);
         fhRiwayat.tambahRiwayat(peminjaman);
 

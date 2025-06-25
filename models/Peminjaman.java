@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 public class Peminjaman {
-    private int kodePeminjaman;
+    private int kodePeminjaman = 0;
     private Mahasiswa mhs;
     private Set<Buku> daftarBukuDipinjam;
     private LocalDate tanggalPinjam;
@@ -12,6 +12,8 @@ public class Peminjaman {
     private LocalDate batasTanggalKembali;
     private String status;
     private boolean isDikembalikan;
+
+    public Peminjaman() {}
 
     public Peminjaman(int kodePeminjaman, Mahasiswa mhs, Set<Buku> daftarBukuDipinjam, LocalDate tanggalPinjam, LocalDate batasTanggalKembali, String status) {
         this.kodePeminjaman = kodePeminjaman;

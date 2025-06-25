@@ -142,6 +142,7 @@ public class FormInputPengembalian extends RoundedPanel {
         buttonCancel.addActionListener(e -> {
             clearForm();
             setMode("");
+            onSaveSuccess.run();
         });
 
         buttonSave.addActionListener(e -> {
@@ -152,11 +153,15 @@ public class FormInputPengembalian extends RoundedPanel {
                 boolean isDenda = manajemenPeminjaman.prosesPengembalian(Integer.valueOf(selectedKodePeminjaman));
 
                 if (isDenda) {
-                    JOptionPane.showInputDialog(null, "Mahasiswa dengan NIM " + inputNim.getInputText() + " telah terlambat. Mohon segera membayar denda sebesar Rp." + peminjaman.getMhs().getDenda(), "Peringatan", JOptionPane.WARNING_MESSAGE);
-                    peminjaman.getMhs().resetDenda();
-                    peminjaman.getMhs().setKenaDenda(false);
-                    manajemenMhs.editMhs(peminjaman.getMhs());
-                    JOptionPane.showMessageDialog(null, "Denda berhasil terbayar", "Success", JOptionPane.OK_OPTION);
+                    JOptionPane.showInputDialog(null, "Mahasiswa dengan NIM " + inputNim.getInputText() + " telah terlambat.\nMohon segera membayar denda sebesar Rp." + peminjaman.getMhs().getDenda() + " (Input nominal tertera)", "Peringatan", JOptionPane.WARNING_MESSAGE);
+
+                    //reset denda
+                    Mahasiswa mhs = manajemenMhs.cariMhs(peminjaman.getMhs().getNim());
+                    mhs.setKenaDenda(false);
+                    mhs.resetDenda();
+                    manajemenMhs.editMhs(mhs);
+
+                    JOptionPane.showMessageDialog(null, "Denda berhasil terbayar", "Success", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(null, "Pengembalian buku berhasil.");
                 }

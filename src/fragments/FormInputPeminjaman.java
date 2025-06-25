@@ -202,9 +202,9 @@ public class FormInputPeminjaman extends RoundedPanel {
                 boolean success = manajemenPeminjaman.prosesPeminjaman(mhs, daftarBukuSet, durasiPeminjaman);
 
                 if (success) {
-                    JOptionPane.showMessageDialog(this, "Peminjaman berhasil disimpan");
+                    JOptionPane.showMessageDialog(null, "Peminjaman berhasil disimpan");
                 } else {
-                    JOptionPane.showMessageDialog(this, "Peminjaman gagal disimpan");
+                    JOptionPane.showMessageDialog(null, "Peminjaman gagal disimpan");
                 }
                 
                 PeminjamanFormPage.daftarBuku.clear();
@@ -212,7 +212,7 @@ public class FormInputPeminjaman extends RoundedPanel {
                 clearForm();
                 setMode("");
             } else {
-                JOptionPane.showMessageDialog(this, "Tidak ada buku di keranjang");
+                JOptionPane.showMessageDialog(null, "Tidak ada buku di keranjang");
             }
 
         });

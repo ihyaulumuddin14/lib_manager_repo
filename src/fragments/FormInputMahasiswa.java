@@ -121,7 +121,7 @@ public class FormInputMahasiswa extends RoundedPanel {
                 setFieldInput(inputNim.getInputText(), inputNama.getInputText(), inputProdi.getInputText());
                 MahasiswaFormPage.refreshStatistik(mhs);
             } else {
-                JOptionPane.showMessageDialog(this, "Mahasiswa dengan NIM " + nim + " tidak ditemukan.");
+                JOptionPane.showMessageDialog(null, "Mahasiswa dengan NIM " + nim + " tidak ditemukan.");
             }
         });
 
@@ -131,7 +131,7 @@ public class FormInputMahasiswa extends RoundedPanel {
             if (validateInput()) {
                 setMode("edit");
             } else {
-                JOptionPane.showMessageDialog(this, "Tidak ada mahasiswa yang dipilih!", "Failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Tidak ada mahasiswa yang dipilih!", "Failed", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -139,7 +139,7 @@ public class FormInputMahasiswa extends RoundedPanel {
             if (validateInput()) {
                 setMode("delete"); 
             } else {
-                JOptionPane.showMessageDialog(this, "Tidak ada mahasiswa yang dipilih!", "Failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Tidak ada mahasiswa yang dipilih!", "Failed", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -155,23 +155,23 @@ public class FormInputMahasiswa extends RoundedPanel {
                             boolean success = manajemenMhs.tambahMhs(createMahasiswa());
 
                             if (success) {
-                                JOptionPane.showMessageDialog(this, "Mahasiswa berhasil ditambahkan!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Mahasiswa berhasil ditambahkan!", "Success", JOptionPane.INFORMATION_MESSAGE);
                             } else {
-                                JOptionPane.showMessageDialog(this, "Mahasiswa gagal ditambahkan!", "Failed", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Mahasiswa gagal ditambahkan!", "Failed", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                         case "edit" -> {
                             Mahasiswa mhs = createMahasiswa();
                             manajemenMhs.editMhs(mhs);
-                            JOptionPane.showMessageDialog(this, "Data berhasil diubah!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Data berhasil diubah!", "Success", JOptionPane.INFORMATION_MESSAGE);
                         }
                         case "delete" -> {
                             boolean success = manajemenMhs.hapusMhs(createMahasiswa().getNim());
 
                             if (success) {
-                                JOptionPane.showMessageDialog(this, "Data berhasil dihapus!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Data berhasil dihapus!", "Success", JOptionPane.INFORMATION_MESSAGE);
                             } else {
-                                JOptionPane.showMessageDialog(this, "Data gagal dihapus!", "Failed", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Data gagal dihapus!", "Failed", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                         default -> {}
@@ -181,13 +181,13 @@ public class FormInputMahasiswa extends RoundedPanel {
                         onSaveSuccess.run();
                     }
                 } catch (Exception err) {
-                    JOptionPane.showMessageDialog(this, err.getMessage(), "Failed", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, err.getMessage(), "Failed", JOptionPane.ERROR_MESSAGE);
                 } finally {
                     setMode("");
                     clearForm();
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
+                JOptionPane.showMessageDialog(null, "Semua field harus diisi!");
             }
         });
 

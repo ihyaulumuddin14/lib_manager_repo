@@ -135,7 +135,7 @@ public class FormInputBuku extends RoundedPanel {
             if (validateInput()) {
                 setMode("edit");
             } else {
-                JOptionPane.showMessageDialog(this, "Tidak ada buku yang dipilih.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Tidak ada buku yang dipilih.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             }
         });
         
@@ -143,7 +143,7 @@ public class FormInputBuku extends RoundedPanel {
             if (validateInput()) {
                 setMode("delete");
             } else {
-                JOptionPane.showMessageDialog(this, "Tidak ada buku yang dipilih.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Tidak ada buku yang dipilih.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             }
         });
 
@@ -161,23 +161,23 @@ public class FormInputBuku extends RoundedPanel {
                             boolean success = manajemenBuku.tambahBuku(createBuku());
     
                             if (success) {
-                                JOptionPane.showMessageDialog(this, "Buku berhasil ditambahkan.");
+                                JOptionPane.showMessageDialog(null, "Buku berhasil ditambahkan.");
                             } else {
-                                JOptionPane.showMessageDialog(this, "Gagal menambahkan buku.", "Failed", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Gagal menambahkan buku.", "Failed", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                         case "edit" -> {
                             Buku buku = createBuku();
                             manajemenBuku.editBuku(buku);
-                            JOptionPane.showMessageDialog(this, "Buku berhasil diedit.");
+                            JOptionPane.showMessageDialog(null, "Buku berhasil diedit.");
                         }
                         case "delete" -> {
                             boolean success = manajemenBuku.hapusBuku(inputKode.getInputText());
     
                             if (success) {
-                                JOptionPane.showMessageDialog(this, "Buku berhasil dihapus.");
+                                JOptionPane.showMessageDialog(null, "Buku berhasil dihapus.");
                             } else {
-                                JOptionPane.showMessageDialog(this, "Gagal menghapus buku.", "Failed", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Gagal menghapus buku.", "Failed", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                         default -> {}
@@ -187,13 +187,13 @@ public class FormInputBuku extends RoundedPanel {
                         onSaveSuccess.run();
                     }
                 } catch (Exception err) {
-                    JOptionPane.showMessageDialog(this, err.getMessage());
+                    JOptionPane.showMessageDialog(null, err.getMessage());
                 } finally {
                     setMode("");
                     clearForm();
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
+                JOptionPane.showMessageDialog(null, "Semua field harus diisi!");
             }
 
         });
